@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+
 class StorePage extends StatefulWidget {
   @override
   _StorePageState createState() => _StorePageState();
@@ -42,7 +43,7 @@ class _StorePageState extends State<StorePage> {
                       Navigator.pushNamed(
                         context,
                         '/catalog',
-                        arguments: 'Store ${index + 1}',
+                        arguments: 'Toko ${index + 1}',
                       );
                     },
                     child: Container(
