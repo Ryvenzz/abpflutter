@@ -149,6 +149,7 @@ Widget _buildProductCard(BuildContext context, Product product) {
                     IconButton(
                       icon: Icon(Icons.add),
                       onPressed: () {
+                        _showModal(context, product);
                         // Add your add to cart logic here
                       },
                     ),
@@ -216,25 +217,5 @@ Widget _buildProductCard(BuildContext context, Product product) {
     );
   }
 
-  Widget _buildBottomNavigationBar() {
-    return BottomNavigationBar(
-      items: const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          label: 'Home',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.store),
-          label: 'Store',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.person),
-          label: 'Profile',
-        ),
-      ],
-      selectedItemColor: Color.fromARGB(255, 250, 248, 248).withOpacity(0.8),
-      unselectedItemColor: Colors.grey,
-      backgroundColor: const Color.fromRGBO(134, 28, 30, 1),
-    );
-  }
+  
 }

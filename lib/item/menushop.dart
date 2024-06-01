@@ -2,17 +2,21 @@ class Menu {
   final int id;
   final String namaMenu;
   final int hargaMenu;
-  final String deskripsiMenu;
   final int stokMenu;
-  final String shopNamaToko;
+  final String deskripsiMenu;
+  final String namaToko;
+  final String? imageMenu;
+  final String? imageToko;
 
   Menu({
     required this.id,
     required this.namaMenu,
     required this.hargaMenu,
-    required this.deskripsiMenu,
     required this.stokMenu,
-    required this.shopNamaToko,
+    required this.deskripsiMenu,
+    required this.namaToko,
+    this.imageMenu,
+    this.imageToko,
   });
 
   factory Menu.fromJson(Map<String, dynamic> json) {
@@ -20,9 +24,11 @@ class Menu {
       id: json['id'],
       namaMenu: json['namaMenu'],
       hargaMenu: json['hargaMenu'],
-      deskripsiMenu: json['deskripsiMenu'],
       stokMenu: json['stokMenu'],
-      shopNamaToko: json['shop_namaToko'],
+      deskripsiMenu: json['deskripsiMenu'],
+      namaToko: json['namaToko'],
+      imageMenu: json['imageMenu'],
+      imageToko: json['imageToko'],
     );
   }
 }

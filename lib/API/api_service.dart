@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../item/Product.dart';
 import '../item/Shop.dart';
+import '../item/menushop.dart';
 
 class ApiService {
   static const String MenuUrl = 'http://10.0.2.2:8000/api/menu/all';
@@ -99,5 +100,22 @@ class ApiService {
     }
   }
 
-  
+  //Get menu by shop
+  static Future<List<Menu>> fetchMenuByShop(int shopId) async {
+    final Map<String, dynamic> requestData = {'shop_id': shopId};
+    final response = await http.get(
+      Uri.parse('http://10.0.2.2:8000/api/menu/byShop?shop_id=$shopId'),
+    );
+
+    print(response.body);
+    if (response.statusCode == 200) {
+      final jsonResponse = jsonDecode(response.body);
+      List<dynamic> body = jsonResponse['data'];
+      
+      List<Menu> products = body.map((dynamic item) => Menu.fromJson(item)).toList();
+      return products;
+    } else {
+      throw Exception('Failed to load menu');
+    }
+  }
 }
