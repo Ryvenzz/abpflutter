@@ -17,7 +17,7 @@ class StoreCatalogPage extends StatelessWidget {
         ),
       ),
       body: FutureBuilder<List<catalog>>(
-        future: ApiService.fetchCatalog(storeId),
+        future: ApiService.fetchProducts(storeId),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());

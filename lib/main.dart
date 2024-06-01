@@ -1,22 +1,20 @@
-import 'package:abp/page/home.dart';
-import 'package:abp/page/login.dart';
-import 'package:abp/page/registration.dart';
-import 'package:abp/page/store.dart';
-import 'package:abp/page/catalogpage.dart';
 import 'package:flutter/material.dart';
+import 'page/home.dart';
+import 'page/login.dart';
+import 'page/registration.dart';
+// import 'page/catalog.dart';
+import 'page/shop_page.dart';
 
 void main() {
-  runApp(new MaterialApp(
+  runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
     initialRoute: '/home',
     routes: {
       '/home': (context) => HomePage(),
       '/login': (context) => LoginForm(),
       '/registration': (context) => RegistrationForm(),
-      '/catalog': (context) => StoreCatalogPage(),
-      '/store': (context) => StorePage()
+      // '/catalog': (context) => StoreCatalogPage(),
+      '/store': (context) => StorePage(),
     },
   ));
-  
 }
-
