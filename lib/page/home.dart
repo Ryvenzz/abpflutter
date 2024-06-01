@@ -68,48 +68,52 @@ class HomePage extends StatelessWidget {
   }
 
   Widget _buildBestSelling() {
-    return FutureBuilder<List<Product>>(
-      future: ApiService.fetchProducts(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return Center(child: Text('No products found'));
-        } else {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                'Menu',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+  return FutureBuilder<List<Product>>(
+    future: ApiService.fetchProduct(),
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return Center(child: CircularProgressIndicator());
+      } else if (snapshot.hasError) {
+        return Center(child: Text('Error: ${snapshot.error}'));
+      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+        return Center(child: Text('No products found'));
+      } else {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(
+              'Menu',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 10),
+            GridView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 0.75,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
               ),
-              SizedBox(height: 10),
-              GridView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: 0.75,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                ),
-                itemCount: snapshot.data!.length,
-                itemBuilder: (context, index) {
-                  Product product = snapshot.data![index];
-                  return _buildProductCard(context, product);
-                },
-              ),
-            ],
-          );
-        }
-      },
-    );
-  }
+              itemCount: snapshot.data!.length,
+              itemBuilder: (context, index) {
+                Product product = snapshot.data![index];
+                return _buildProductCard(context, product);
+              },
+            ),
+          ],
+        );
+      }
+    },
+  );
+}
 
-  Widget _buildProductCard(BuildContext context, Product product) {
-    return Container(
+Widget _buildProductCard(BuildContext context, Product product) {
+  return GestureDetector(
+    onTap: () {
+      // Add your onTap logic here
+    },
+    child: Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: Colors.grey[300]!),
@@ -121,8 +125,9 @@ class HomePage extends StatelessWidget {
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
-                
               ),
+              // You can display product image here
+              // Example: Image.network(product.imageMenu),
             ),
           ),
           Padding(
@@ -139,12 +144,12 @@ class HomePage extends StatelessWidget {
                         color: Color.fromARGB(255, 236, 19, 4).withOpacity(0.8),
                         borderRadius: BorderRadius.circular(4),
                       ),
-                      child: Text('${product.hargaMenu}'), // Harga produk
+                      child: Text('Price: \$${product.hargaMenu}'),
                     ),
                     IconButton(
                       icon: Icon(Icons.add),
                       onPressed: () {
-                        _showModal(context, product); // Panggil fungsi modal saat tombol "Add" ditekan
+                        // Add your add to cart logic here
                       },
                     ),
                   ],
@@ -155,7 +160,7 @@ class HomePage extends StatelessWidget {
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  'Stok: ${product.stokMenu}',
+                  product.deskripsiMenu,
                   overflow: TextOverflow.ellipsis,
                   maxLines: 2,
                   style: TextStyle(fontSize: 12),
@@ -166,8 +171,9 @@ class HomePage extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 
   void _showModal(BuildContext context, Product product) {
     int quantity = 1;
@@ -232,7 +238,3 @@ class HomePage extends StatelessWidget {
     );
   }
 }
-
-
-
-// 

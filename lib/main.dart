@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 import 'page/home.dart';
 import 'page/login.dart';
 import 'page/registration.dart';
-// import 'page/catalog.dart';
+import 'page/catalogpage.dart';
 import 'page/shop_page.dart';
 
 void main() {
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
-    initialRoute: '/home',
+    initialRoute: '/login',
     routes: {
       '/home': (context) => HomePage(),
-      '/login': (context) => LoginForm(),
-      '/registration': (context) => RegistrationForm(),
-      // '/catalog': (context) => StoreCatalogPage(),
+      '/login': (context) => LoginPage(),
+      '/registration': (context) => RegistrationPage(),
+      '/catalog': (context) => StoreCatalogPage(),
       '/store': (context) => StorePage(),
     },
   ));
