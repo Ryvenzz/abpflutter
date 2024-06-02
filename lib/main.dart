@@ -4,6 +4,7 @@ import 'page/login.dart';
 import 'page/registration.dart';
 import 'page/catalogpage.dart';
 import 'page/shop_page.dart';
+import 'page/cartpage.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -14,6 +15,9 @@ void main() {
       '/login': (context) => LoginPage(),
       '/registration': (context) => RegistrationPage(),
       '/store': (context) => ShopPage(),
+      // '/catalog': (context) => CatalogPage(),
+      '/cart': (context) => CartPage(),
+
     },
   ));
 }

@@ -3,10 +3,10 @@ import '../API/api_service.dart'; // Sesuaikan dengan lokasi file ApiService
 
 class RegistrationPage extends StatefulWidget {
   @override
-  _RegistrationFormState createState() => _RegistrationFormState();
+  _RegistrationPageState createState() => _RegistrationPageState();
 }
 
-class _RegistrationFormState extends State<RegistrationPage> {
+class _RegistrationPageState extends State<RegistrationPage> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController _nicknameController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
@@ -183,6 +183,20 @@ class _RegistrationFormState extends State<RegistrationPage> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.0),
                         ),
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      // Pindah ke halaman registrasi
+                      Navigator.pushNamed(context, '/login');
+                    },
+                    child: Text(
+                      'Have an account? Login here',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.blue,
+                        decoration: TextDecoration.underline,
                       ),
                     ),
                   ),

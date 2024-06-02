@@ -38,14 +38,20 @@ class HomePage extends StatelessWidget {
             icon: Icon(Icons.shopping_basket),
             color: Colors.white,
             onPressed: () {
-              Navigator.pushNamed(context, '/store');
+              Navigator.pushNamed(context, '/cart');
             },
           ),
           IconButton(
-            icon: Icon(Icons.login),
+            icon: Icon(Icons.logout),
             color: Colors.white,
-            onPressed: () {
-              Navigator.pushNamed(context, '/login');
+            onPressed: () async {
+              try {
+                await ApiService.logout();
+                Navigator.pushReplacementNamed(context, '/login');
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Logout successful')));
+              } catch (e) {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Logout failed: $e')));
+              }
             },
           ),
         ],
@@ -145,12 +151,22 @@ Widget _buildProductCard(BuildContext context, Product product) {
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text('Price: \$${product.hargaMenu}'),
+                      
                     ),
                     IconButton(
                       icon: Icon(Icons.add),
-                      onPressed: () {
-                        _showModal(context, product);
-                        // Add your add to cart logic here
+                      onPressed: () async {
+                        try {
+                          int? bookingId = await ApiService.getBookingIdByUser();
+                          if (bookingId == null) {
+                            // Handle the case where the booking ID is not found
+                            throw Exception('Booking ID not found');
+                          }
+                          _showModal(context, product, bookingId);
+                        } catch (e) {
+                          // Handle any errors that occur
+                          print('Error: $e');
+                        }
                       },
                     ),
                   ],
@@ -158,6 +174,10 @@ Widget _buildProductCard(BuildContext context, Product product) {
                 SizedBox(height: 8),
                 Text(
                   product.namaMenu,
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  "Stok: "+product.stokMenu.toString(),
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 Text(
@@ -176,7 +196,7 @@ Widget _buildProductCard(BuildContext context, Product product) {
   );
 }
 
-  void _showModal(BuildContext context, Product product) {
+  void _showModal(BuildContext context, Product product, int bookingId) {
     int quantity = 1;
 
     showModalBottomSheet(
@@ -191,7 +211,7 @@ Widget _buildProductCard(BuildContext context, Product product) {
               Text('Order ${product.namaMenu}'), // Modal title
               SizedBox(height: 20),
               TextFormField(
-                initialValue: '1',
+                initialValue: '1', // Menggunakan '1' sebagai nilai awal
                 decoration: InputDecoration(
                   labelText: 'Quantity',
                   border: OutlineInputBorder(),
@@ -203,10 +223,14 @@ Widget _buildProductCard(BuildContext context, Product product) {
               ),
               SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {
-                  // Logic to order product goes here
-                  print('Ordered $quantity of ${product.namaMenu}');
-                  Navigator.pop(context); // Close modal
+                onPressed: () async {
+                  try {
+                    await ApiService.addCart(bookingId, product.id, quantity);
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Added to cart')));
+                    Navigator.pop(context); // Close modal
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to add to cart: $e')));
+                  }
                 },
                 child: Text('Order'), // Order button
               ),
