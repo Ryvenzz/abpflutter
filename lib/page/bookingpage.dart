@@ -55,7 +55,7 @@ class _PageBookingState extends State<PageBooking> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text('Total Harga: ${booking.totalHarga}'),
-                      Text('Status Pesanan: ${booking.statusSelesai}'),
+                      Text('Status Pesanan: ${booking.statusLengkap == "Belum Lengkap" ? "Dalam proses" : booking.statusLengkap}'),
                     ],
                   ),
                   trailing: TextButton(
