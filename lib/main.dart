@@ -8,7 +8,7 @@ import 'page/shop_page.dart';
 void main() {
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
-    initialRoute: '/home',
+    initialRoute: '/login',
     routes: {
       '/home': (context) => HomePage(),
       '/login': (context) => LoginPage(),

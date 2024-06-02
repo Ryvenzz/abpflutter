@@ -1,5 +1,5 @@
-// import 'package:abp/User/user.dart';
 // import 'package:flutter/material.dart';
+// import '../API/api_service.dart'; // Sesuaikan dengan lokasi file ApiService
 
 // class RegistrationForm extends StatefulWidget {
 //   @override
@@ -8,15 +8,17 @@
 
 // class _RegistrationFormState extends State<RegistrationForm> {
 //   final _formKey = GlobalKey<FormState>();
-//   String _name = "";
-//   String _email = "";
-//   String _password = "";
-//   String _confirmPassword = "";
+//   TextEditingController _nicknameController = TextEditingController();
+//   TextEditingController _passwordController = TextEditingController();
+//   TextEditingController _confirmPasswordController = TextEditingController();
+//   TextEditingController _fullNameController = TextEditingController();
+//   TextEditingController _phoneNumberController = TextEditingController();
+//   TextEditingController _addressController = TextEditingController();
 
 //   @override
 //   Widget build(BuildContext context) {
-//     return new Scaffold(
-//       body: Center( // Menggunakan Center untuk menengahkan kotak pendaftaran
+//     return Scaffold(
+//       body: Center(
 //         child: SingleChildScrollView(
 //           padding: EdgeInsets.all(16.0),
 //           child: Container(
@@ -55,49 +57,23 @@
 //                   ),
 //                   SizedBox(height: 20.0),
 //                   TextFormField(
-//                     initialValue: _name,
+//                     controller: _nicknameController,
 //                     decoration: InputDecoration(
-//                       hintText: 'Nama',
+//                       hintText: 'Nickname',
 //                       border: OutlineInputBorder(
 //                         borderRadius: BorderRadius.circular(8.0),
 //                       ),
 //                     ),
 //                     validator: (value) {
 //                       if (value!.isEmpty) {
-//                         return 'Please enter your name';
+//                         return 'Please enter your Nickname';
 //                       }
 //                       return null;
-//                     },
-//                     onSaved: (value) {
-//                       setState(() {
-//                         _name = value!;
-//                       });
 //                     },
 //                   ),
 //                   SizedBox(height: 16.0),
 //                   TextFormField(
-//                     decoration: InputDecoration(
-//                       hintText: 'Email Address',
-//                       border: OutlineInputBorder(
-//                         borderRadius: BorderRadius.circular(8.0),
-//                       ),
-//                     ),
-//                     validator: (value) {
-//                       if (value!.isEmpty) {
-//                         return 'Please enter your email address';
-//                       } else if (!RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+\.[a-zA-Z]+").hasMatch(value)) {
-//                         return 'Please enter a valid email address';
-//                       }
-//                       return null;
-//                     },
-//                     onSaved: (value) {
-//                       setState(() {
-//                         _email = value!;
-//                       });
-//                     },
-//                   ),
-//                   SizedBox(height: 16.0),
-//                   TextFormField(
+//                     controller: _passwordController,
 //                     decoration: InputDecoration(
 //                       hintText: 'Password',
 //                       border: OutlineInputBorder(
@@ -112,26 +88,71 @@
 //                       }
 //                       return null;
 //                     },
-//                     onSaved: (value) {
-//                       _password = value!.trim();
-//                     },
 //                     obscureText: true,
 //                   ),
 //                   SizedBox(height: 16.0),
 //                   TextFormField(
+//                     controller: _confirmPasswordController,
 //                     decoration: InputDecoration(
 //                       hintText: 'Confirm Password',
 //                       border: OutlineInputBorder(
 //                         borderRadius: BorderRadius.circular(8.0),
 //                       ),
 //                     ),
-//                     onSaved: (value) {
-//                       _confirmPassword = value!.trim();
-//                     },
-//                     obscureText: true,
 //                     validator: (value) {
 //                       if (value!.isEmpty) {
 //                         return 'Please confirm your password';
+//                       } else if (value != _passwordController.text) {
+//                         return 'Passwords do not match';
+//                       }
+//                       return null;
+//                     },
+//                     obscureText: true,
+//                   ),
+//                   SizedBox(height: 20.0),
+//                   TextFormField(
+//                     controller: _fullNameController,
+//                     decoration: InputDecoration(
+//                       hintText: 'Fullname',
+//                       border: OutlineInputBorder(
+//                         borderRadius: BorderRadius.circular(8.0),
+//                       ),
+//                     ),
+//                     validator: (value) {
+//                       if (value!.isEmpty) {
+//                         return 'Please enter your Fullname';
+//                       }
+//                       return null;
+//                     },
+//                   ),
+//                   SizedBox(height: 16.0),
+//                   TextFormField(
+//                     controller: _phoneNumberController,
+//                     decoration: InputDecoration(
+//                       hintText: 'Phone Number',
+//                       border: OutlineInputBorder(
+//                         borderRadius: BorderRadius.circular(8.0),
+//                       ),
+//                     ),
+//                     validator: (value) {
+//                       if (value!.isEmpty) {
+//                         return 'Please enter your phone number';
+//                       }
+//                       return null;
+//                     },
+//                   ),
+//                   SizedBox(height: 16.0),
+//                   TextFormField(
+//                     controller: _addressController,
+//                     decoration: InputDecoration(
+//                       hintText: 'Address',
+//                       border: OutlineInputBorder(
+//                         borderRadius: BorderRadius.circular(8.0),
+//                       ),
+//                     ),
+//                     validator: (value) {
+//                       if (value!.isEmpty) {
+//                         return 'Please enter your address';
 //                       }
 //                       return null;
 //                     },
@@ -142,31 +163,15 @@
 //                       borderRadius: BorderRadius.circular(8.0),
 //                       gradient: LinearGradient(
 //                         colors: [
-//                           const Color.fromARGB(255, 236, 19, 4).withOpacity(0.8),const Color.fromARGB(255, 32, 3, 1).withOpacity(0.8)
+//                           const Color.fromARGB(255, 236, 19, 4).withOpacity(0.8),
+//                           const Color.fromARGB(255, 32, 3, 1).withOpacity(0.8)
 //                         ],
 //                         begin: Alignment.centerLeft,
 //                         end: Alignment.centerRight,
 //                       ),
 //                     ),
 //                     child: ElevatedButton(
-//                      onPressed: () {
-//                       if (_formKey.currentState!.validate()) {
-//                         _formKey.currentState!.save();
-//                         // Memeriksa apakah password dan konfirmasi password cocok
-//                       if (_password != _confirmPassword) {
-//                         // Jika tidak cocok, tampilkan pesan kesalahan di bawah TextFormField
-//                         ScaffoldMessenger.of(context).showSnackBar(
-//                           SnackBar(
-//                             content: Text('Passwords do not match. Please try again.'),
-//                           ),
-//                         );
-//                       } else {
-//                           // Jika cocok, daftarkan pengguna dan pindah ke halaman login
-//                           registerUser(_name, _email, _password);
-//                           Navigator.pushNamed(context, '/login');
-//                         }
-//                       }
-//                     },
+//                       onPressed: _registerUser,
 //                       child: Text(
 //                         'Register',
 //                         style: TextStyle(color: Colors.white),
@@ -189,4 +194,67 @@
 //       ),
 //     );
 //   }
+
+//   void _registerUser() async {
+//   String nickname = _nicknameController.text;
+//   String password = _passwordController.text;
+//   String fullName = _fullNameController.text;
+//   String phoneNumber = _phoneNumberController.text;
+//   String address = _addressController.text;
+//   String role = 'Buyer'; // Default role for registration
+
+//   try {
+//     // Mencoba melakukan registrasi
+//     await ApiService.registerUser(
+//       nickname: nickname,
+//       password: password,
+//       fullName: fullName,
+//       phoneNumber: phoneNumber,
+//       role: role,
+//       address: address,
+//     );
+
+//     // Registrasi berhasil, kembali ke halaman login
+//     _showSuccessDialog();
+//   } catch (e) {
+//     // Registrasi gagal, tampilkan pesan kesalahan
+//     _showErrorDialog();
+//   }
+// }
+
+// void _showSuccessDialog() {
+//   showDialog(
+//     context: context,
+//     builder: (context) => AlertDialog(
+//       title: Text('Registration Successful'),
+//       content: Text('You have successfully registered.'),
+//       actions: [
+//         TextButton(
+//           onPressed: () {
+//             Navigator.pop(context); // Tutup dialog
+//             Navigator.pushReplacementNamed(context, '/login'); // Kembali ke halaman login
+//           },
+//           child: Text('OK'),
+//         ),
+//       ],
+//     ),
+//   );
+// }
+
+// void _showErrorDialog() {
+//   showDialog(
+//     context: context,
+//     builder: (context) => AlertDialog(
+//       title: Text('Registration Failed'),
+//       content: Text('Failed to register user. Please try again.'),
+//       actions: [
+//         TextButton(
+//           onPressed: () => Navigator.pop(context),
+//           child: Text('OK'),
+//         ),
+//       ],
+//     ),
+//   );
+// }
+
 // }

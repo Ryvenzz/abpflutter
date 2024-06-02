@@ -92,6 +92,14 @@ class _LoginPageState extends State<LoginPage> {
               onPressed: _login,
               child: Text('Login'),
             ),
+            Text(
+              'Don\'t have an account? Register here',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.blue,
+                decoration: TextDecoration.underline,
+                ),
+            ),
             SizedBox(height: 8.0),
             Text(
               _errorMessage,

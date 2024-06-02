@@ -1,15 +1,67 @@
-import 'package:abp/User/user.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-class LoginForm extends StatefulWidget {
+class LoginPage extends StatefulWidget {
   @override
-  _LoginFormState createState() => _LoginFormState();
+  _LoginPageState createState() => _LoginPageState();
 }
 
-class _LoginFormState extends State<LoginForm> {
-  final _formKey = GlobalKey<FormState>();
-  String _email = "";
-  String _password = "";
+class _LoginPageState extends State<LoginPage> {
+  final TextEditingController _nicknameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  String _errorMessage = '';
+
+  Future<void> _login() async {
+    final String nickname = _nicknameController.text;
+    final String password = _passwordController.text;
+
+    final response = await http.post(
+      Uri.parse('http://10.0.2.2:8000/api/login'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'nickname': nickname,
+        'password': password,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      var jsonResponse = jsonDecode(response.body);
+    
+
+      if (jsonResponse['data'] != null && jsonResponse['data']['data'] != null) {
+        // Jika respons memiliki data dan data pengguna
+        // Ini menunjukkan bahwa pengguna berhasil login
+        // Lakukan sesuatu di sini, misalnya navigasi ke halaman beranda
+        String token = jsonResponse['data']['data']['token'];
+          Navigator.pushReplacementNamed(
+            context,
+            '/home',
+            arguments: {'token': token, 'nickname': nickname},
+          );
+      } else if (jsonResponse['data'] != null &&
+          jsonResponse['data']['status'] == 'failed') {
+            setState(() {
+            _errorMessage = "Akun telah login di device lain";
+          });
+        // Jika respons memiliki data tetapi statusnya 'failed'
+        // Ini menunjukkan bahwa akun sudah login sebelumnya
+        // Lakukan sesuatu di sini, misalnya tampilkan pesan bahwa akun sudah login
+      } else {
+        // Jika respons tidak sesuai dengan format yang diharapkan
+        // Lakukan sesuatu di sini, misalnya tampilkan pesan kesalahan
+        setState(() {
+            _errorMessage = "Error Credential";
+          });
+      }
+    } else {
+      setState(() {
+        _errorMessage = 'Login failed. Please check your credentials.';
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +79,6 @@ class _LoginFormState extends State<LoginForm> {
               ),
             ),
             child: Form(
-              key: _formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
@@ -53,48 +104,24 @@ class _LoginFormState extends State<LoginForm> {
                   ),
                   SizedBox(height: 20.0),
                   TextFormField(
+                    controller: _nicknameController,
                     decoration: InputDecoration(
-                      hintText: 'Email Address',
+                      hintText: 'Nickname',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8.0),
                       ),
                     ),
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Please enter your email address';
-                      } else if (!RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+\.[a-zA-Z]+").hasMatch(value)) {
-                        return 'Please enter a valid email address';
-                      }
-                      return null;
-                    },
-                    onSaved: (value) {
-                      setState(() {
-                        _email = value!;
-                      });
-                    },
                   ),
                   SizedBox(height: 16.0),
                   TextFormField(
+                    controller: _passwordController,
+                    obscureText: true,
                     decoration: InputDecoration(
                       hintText: 'Password',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8.0),
                       ),
                     ),
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Please enter your password';
-                      } else if (value.length < 6) {
-                        return 'Password must be at least 6 characters long';
-                      }
-                      return null;
-                    },
-                    onSaved: (value) {
-                      setState(() {
-                        _password = value!;
-                      });
-                    },
-                    obscureText: true,
                   ),
                   SizedBox(height: 20.0),
                   Container(
@@ -109,36 +136,10 @@ class _LoginFormState extends State<LoginForm> {
                       ),
                     ),
                     child: ElevatedButton(
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          _formKey.currentState!.save();
-                          if (loginUser(_email, _password) != null) { // Memeriksa kredensial login
-                            Navigator.pushNamed(context, '/home');
-                          } else {
-                            // Menampilkan pesan kesalahan jika login gagal
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: Text('Login Failed'),
-                                  content: Text('Invalid email or password. Please try again.'),
-                                  actions: <Widget>[
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: Text('OK'),
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
-                          }
-                        }
-                      },
+                      onPressed: _login,
                       child: Text(
                         'Login',
-                        style: TextStyle(color: Colors.white),
+                        style: TextStyle(color: Colors.white),  
                       ),
                       style: ElevatedButton.styleFrom(
                         minimumSize: Size(double.infinity, 50),
@@ -147,8 +148,8 @@ class _LoginFormState extends State<LoginForm> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.0),
                         ),
+                      ),  
                       ),
-                    ),
                   ),
                   SizedBox(height: 20.0),
                   GestureDetector(
@@ -165,12 +166,18 @@ class _LoginFormState extends State<LoginForm> {
                       ),
                     ),
                   ),
+                  SizedBox(height: 8.0),
+                      Text(
+                      _errorMessage,
+                      style: TextStyle(color: Colors.red),
+                    ),
                 ],
               ),
             ),
           ),
         ),
       ),
+ 
     );
   }
 }
