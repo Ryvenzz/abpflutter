@@ -42,6 +42,13 @@ class HomePage extends StatelessWidget {
             },
           ),
           IconButton(
+            icon: Icon(Icons.history),
+            color: Colors.white,
+            onPressed: (){
+              Navigator.pushNamed(context, '/cart');
+            },
+          ),
+          IconButton(
             icon: Icon(Icons.logout),
             color: Colors.white,
             onPressed: () async {
@@ -54,6 +61,7 @@ class HomePage extends StatelessWidget {
               }
             },
           ),
+          
         ],
       ),
       body: SingleChildScrollView(
@@ -150,8 +158,9 @@ Widget _buildProductCard(BuildContext context, Product product) {
                         color: Color.fromARGB(255, 236, 19, 4).withOpacity(0.8),
                         borderRadius: BorderRadius.circular(4),
                       ),
-                      child: Text('Price: \$${product.hargaMenu}'),
-                      
+                      child: Text('\Rp.${product.hargaMenu}',
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                     IconButton(
                       icon: Icon(Icons.add),

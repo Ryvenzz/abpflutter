@@ -9,7 +9,7 @@ import 'page/cartpage.dart';
 void main() {
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
-    initialRoute: '/login',
+    initialRoute: '/home',
     routes: {
       '/home': (context) => HomePage(),
       '/login': (context) => LoginPage(),

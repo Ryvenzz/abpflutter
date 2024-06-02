@@ -11,7 +11,9 @@ class CatalogPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Catalog Toko $shopId'),
+        title: Text('Catalog Toko $shopId',
+        style: TextStyle(color: Colors.white),),
+         backgroundColor: const Color.fromRGBO(134, 28, 30, 1),
       ),
       body: FutureBuilder<List<Menu>>(
         future: ApiService.fetchMenuByShop(shopId),
@@ -23,20 +25,159 @@ class CatalogPage extends StatelessWidget {
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return Center(child: Text('No products found'));
           } else {
-            return ListView.builder(
-              itemCount: snapshot.data!.length,
-              itemBuilder: (context, index) {
-                Menu Menus = snapshot.data![index];
-                return ListTile(
-                  title: Text(Menus.namaMenu),
-                  subtitle: Text('Price: ${Menus.hargaMenu}'),
-                  // Tambahkan detail menu lainnya sesuai kebutuhan
-                );
-              },
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                SizedBox(height: 10),
+                GridView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    childAspectRatio: 0.75,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
+                  ),
+                  itemCount: snapshot.data!.length,
+                  itemBuilder: (context, index) {
+                    Menu Menus = snapshot.data![index];
+                    return _buildProductCard(context, Menus);
+                  },
+                ),
+              ]
             );
           }
         },
       ),
     );
   }
+
+  Widget _buildProductCard(BuildContext context, Menu product) {
+  return GestureDetector(
+    onTap: () {
+      // Add your onTap logic here
+    },
+    child: Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.grey[300]!),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
+              ),
+              // You can display product image here
+              // Example: Image.network(product.imageMenu),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Color.fromARGB(255, 236, 19, 4).withOpacity(0.8),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text('\Rp.${product.hargaMenu}',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.add),
+                      onPressed: () async {
+                        try {
+                          int? bookingId = await ApiService.getBookingIdByUser();
+                          if (bookingId == null) {
+                            // Handle the case where the booking ID is not found
+                            throw Exception('Booking ID not found');
+                          }
+                          _showModal(context, product, bookingId);
+                        } catch (e) {
+                          // Handle any errors that occur
+                          print('Error: $e');
+                        }
+                      },
+                    ),
+                  ],
+                ),
+                SizedBox(height: 8),
+                Text(
+                  product.namaMenu,
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  "Stok: "+product.stokMenu.toString(),
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  product.deskripsiMenu,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                  style: TextStyle(fontSize: 12),
+                ),
+                SizedBox(height: 8),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+  void _showModal(BuildContext context, Menu product, int bookingId) {
+    int quantity = 1;
+
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          padding: EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('Order ${product.namaMenu}'), // Modal title
+              SizedBox(height: 20),
+              TextFormField(
+                initialValue: '1', // Menggunakan '1' sebagai nilai awal
+                decoration: InputDecoration(
+                  labelText: 'Quantity',
+                  border: OutlineInputBorder(),
+                ),
+                keyboardType: TextInputType.number,
+                onChanged: (value) {
+                  quantity = int.tryParse(value) ?? 1;
+                },
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () async {
+                  try {
+                    await ApiService.addCart(bookingId, product.id, quantity);
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Added to cart')));
+                    Navigator.pop(context); // Close modal
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to add to cart: $e')));
+                  }
+                },
+                child: Text('Order'), // Order button
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
 }
