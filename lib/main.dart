@@ -5,11 +5,13 @@ import 'page/registration.dart';
 import 'page/catalogpage.dart';
 import 'page/shop_page.dart';
 import 'page/cartpage.dart';
+import 'page/bookingpage.dart';
+import 'page/menubookingpage.dart';
 
 void main() {
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
-    initialRoute: '/home',
+    initialRoute: '/login',
     routes: {
       '/home': (context) => HomePage(),
       '/login': (context) => LoginPage(),
@@ -17,6 +19,8 @@ void main() {
       '/store': (context) => ShopPage(),
       // '/catalog': (context) => CatalogPage(),
       '/cart': (context) => CartPage(),
+      '/invoice': (context) => PageBooking(),
+      // '/menuinvoice': (context) => MenuBookingPage(),
 
     },
   ));

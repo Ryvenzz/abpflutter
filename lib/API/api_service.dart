@@ -5,6 +5,8 @@ import 'package:http/http.dart' as http;
 import '../item/Product.dart';
 import '../item/Shop.dart';
 import '../item/menushop.dart';
+import '../item/booking.dart';
+import '../item/menubooking.dart';
 
 class ApiService {
   static const String MenuUrl = 'http://10.0.2.2:8000/api/menu/all';
@@ -390,4 +392,85 @@ class ApiService {
       throw Exception('$e');
     }
   }
+
+  //Get Invoice
+  static Future<List<Booking>> showInvoice() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+
+      if (token == null) {
+        // Handle the case where the token is not found
+        throw Exception('User not authenticated');
+      }
+      final response2 = await http.post(
+        Uri.parse('http://10.0.2.2:8000/api/user/info'),
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+      // print("cek userid ${response2.body}");
+      var jsonResponse2 = jsonDecode(response2.body);
+      final int userid = jsonResponse2['data']['id'];
+
+
+      final response = await http.get(
+        Uri.parse('http://10.0.2.2:8000/api/invoice/all/byUser?user_id=$userid'),
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+      // print("cek data ${response.body}");
+      if (response.statusCode == 200) {
+        var jsonResponse = jsonDecode(response.body);
+        List<dynamic> bookingData = jsonResponse['data'];
+        List<Booking> bookings = bookingData.map((data) => Booking.fromJson(data)).toList();
+        return bookings;
+      } else {
+        // Handle the error
+        throw Exception('Failed to fetch invoice data');
+      }
+    } catch (e) {
+      // Handle any errors that occur during the request
+      throw Exception('Failed to fetch invoice data: $e');
+    }
+  }
+
+  //Get menu invoice
+  static Future<List<MenuBooking>> showMenuBooking(int invoiceId) async {
+  try {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+
+    if (token == null) {
+      throw Exception('User not authenticated');
+    }
+
+
+    final response = await http.get(
+      Uri.parse('http://10.0.2.2:8000/api/invoice/menu/ByBooking?invoice_id=$invoiceId'),
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> data = jsonDecode(response.body);
+      print(data['data']['menus']);
+
+      List<MenuBooking> menuBookings = (data['data']['menus'] as List).map((menuJson) => MenuBooking.fromJson(menuJson)).toList();
+      return menuBookings;
+    } else {
+      throw Exception('Failed to load menu booking');
+    }
+  } catch (e) {
+    throw Exception('Error: $e');
+  }
+}
+
+
+
 }

@@ -45,7 +45,7 @@ class HomePage extends StatelessWidget {
             icon: Icon(Icons.history),
             color: Colors.white,
             onPressed: (){
-              Navigator.pushNamed(context, '/cart');
+              Navigator.pushNamed(context, '/invoice');
             },
           ),
           IconButton(
