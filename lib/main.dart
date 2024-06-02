@@ -11,6 +11,7 @@ import 'page/menubookingpage.dart';
 void main() {
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
+    title: "Telyu Canteen",
     initialRoute: '/login',
     routes: {
       '/home': (context) => HomePage(),

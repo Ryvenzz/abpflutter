@@ -61,7 +61,7 @@ class ShopPage extends StatelessWidget {
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Center(
-                              child: Text('${shop.namaToko} id: ${shop.id}'),
+                              child: Text('${shop.namaToko}'),
 
                             ),
                           ),

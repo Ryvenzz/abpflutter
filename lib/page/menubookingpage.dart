@@ -25,7 +25,10 @@ class _MenuBookingPageState extends State<MenuBookingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Menu Booking'),
+        title: Text('Menu Booking',
+        style: TextStyle(color: Colors.white)
+        ),
+        backgroundColor: const Color.fromRGBO(134, 28, 30, 1),
       ),
       body: FutureBuilder<List<MenuBooking>>(
         future: _futureMenuBooking,

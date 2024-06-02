@@ -32,7 +32,10 @@ class _PageBookingState extends State<PageBooking> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Booking History'),
+        title: Text('Booking History',
+        style: TextStyle(color: Colors.white)
+        ),
+        backgroundColor: const Color.fromRGBO(134, 28, 30, 1),
       ),
       body: FutureBuilder<List<Booking>>(
         future: _futureBooking,
