@@ -1,21 +1,9 @@
 import 'package:flutter/material.dart';
 import '../API/api_service.dart';
 import '../item/Shop.dart';
+import '../page/catalogpage.dart';
 
-class StorePage extends StatefulWidget {
-  @override
-  _StorePageState createState() => _StorePageState();
-}
-
-class _StorePageState extends State<StorePage> {
-  late Future<List<Shop>> futureShops;
-
-  @override
-  void initState() {
-    super.initState();
-    futureShops = ApiService.fetchShops();
-  }
-
+class ShopPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,7 +26,7 @@ class _StorePageState extends State<StorePage> {
             SizedBox(height: 10),
             Expanded(
               child: FutureBuilder<List<Shop>>(
-                future: futureShops,
+                future: ApiService.fetchShops(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(child: CircularProgressIndicator());
@@ -59,10 +47,11 @@ class _StorePageState extends State<StorePage> {
                         Shop shop = snapshot.data![index];
                         return GestureDetector(
                           onTap: () {
-                            Navigator.pushNamed(
+                            Navigator.push(
                               context,
-                              '/catalog',
-                              arguments: shop,
+                              MaterialPageRoute(
+                                builder: (context) => CatalogPage(shopId: shop.id),
+                              ),
                             );
                           },
                           child: Container(
@@ -72,7 +61,8 @@ class _StorePageState extends State<StorePage> {
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Center(
-                              child: Text(shop.namaToko),
+                              child: Text('${shop.namaToko}'),
+
                             ),
                           ),
                         );
@@ -88,3 +78,7 @@ class _StorePageState extends State<StorePage> {
     );
   }
 }
+
+class Str {
+}
+

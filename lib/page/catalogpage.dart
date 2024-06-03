@@ -1,23 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:abp/item/catalog.dart';
-import 'package:abp/API/api_service.dart';
+import '../item/menushop.dart';
+import '../API/api_service.dart';
 
-class StoreCatalogPage extends StatelessWidget {
+class CatalogPage extends StatelessWidget {
+  final int shopId;
+
+  CatalogPage({required this.shopId});
+
   @override
   Widget build(BuildContext context) {
-    final dynamic argument = ModalRoute.of(context)!.settings.arguments;
-    final int storeId = argument is int ? argument : int.parse(argument.toString());
-
     return Scaffold(
       appBar: AppBar(
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            color: const Color.fromRGBO(134, 28, 30, 1),
-          ),
-        ),
+        title: Text('Catalog Toko $shopId',
+        style: TextStyle(color: Colors.white),),
+         backgroundColor: const Color.fromRGBO(134, 28, 30, 1),
       ),
-      body: FutureBuilder<List<catalog>>(
-        future: ApiService.fetchProducts(storeId),
+      body: FutureBuilder<List<Menu>>(
+        future: ApiService.fetchMenuByShop(shopId),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
@@ -25,109 +24,118 @@ class StoreCatalogPage extends StatelessWidget {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return Center(child: Text('No products found'));
-          }
-
-          final catalogs = snapshot.data!;
-          final storeName = catalogs.isNotEmpty ? catalogs.first.shopNamaToko : 'Store';
-
-          return Column(
-            children: [
-              AppBar(
-                title: Text(
-                  storeName,
-                  style: TextStyle(color: Colors.white),
-                ),
-                automaticallyImplyLeading: false,
-              ),
-              Expanded(
-                child: GridView.builder(
-                  padding: EdgeInsets.all(16.0),
+          } else {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                SizedBox(height: 10),
+                GridView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
                     childAspectRatio: 0.75,
                     crossAxisSpacing: 10,
                     mainAxisSpacing: 10,
                   ),
-                  itemCount: catalogs.length,
+                  itemCount: snapshot.data!.length,
                   itemBuilder: (context, index) {
-                    final catalogItem = catalogs[index];
-                    return GestureDetector(
-                      onTap: () {
-                        _showModal(context);
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: Colors.grey[300]!),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: <Widget>[
-                            Expanded(
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                    image: NetworkImage(catalogItem.imageMenu ?? 'placeholder_image_url'),
-                                    fit: BoxFit.cover,
-                                  ),
-                                  borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      Container(
-                                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                        decoration: BoxDecoration(
-                                          color: Color.fromARGB(255, 236, 19, 4).withOpacity(0.8),
-                                          borderRadius: BorderRadius.circular(4),
-                                        ),
-                                        child: Text('${catalogItem.hargaMenu}'),
-                                      ),
-                                      IconButton(
-                                        icon: Icon(Icons.add),
-                                        onPressed: () {
-                                          _showModal(context);
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: 8),
-                                  Text(
-                                    catalogItem.namaMenu,
-                                    style: TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                  Text(
-                                    catalogItem.deskripsiMenu,
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 2,
-                                    style: TextStyle(fontSize: 12),
-                                  ),
-                                  SizedBox(height: 8),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
+                    Menu Menus = snapshot.data![index];
+                    return _buildProductCard(context, Menus);
                   },
                 ),
-              ),
-            ],
-          );
+              ]
+            );
+          }
         },
       ),
     );
   }
 
-  void _showModal(BuildContext context) {
+  Widget _buildProductCard(BuildContext context, Menu product) {
+  return GestureDetector(
+    onTap: () {
+      // Add your onTap logic here
+    },
+    child: Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.grey[300]!),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
+              ),
+              // You can display product image here
+              // Example: Image.network(product.imageMenu),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Color.fromARGB(255, 236, 19, 4).withOpacity(0.8),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text('\Rp.${product.hargaMenu}',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.add),
+                      onPressed: () async {
+                        try {
+                          int? bookingId = await ApiService.getBookingIdByUser();
+                          if (bookingId == null) {
+                            // Handle the case where the booking ID is not found
+                            throw Exception('Booking ID not found');
+                          }
+                          _showModal(context, product, bookingId);
+                        } catch (e) {
+                          // Handle any errors that occur
+                          print('Error: $e');
+                        }
+                      },
+                    ),
+                  ],
+                ),
+                SizedBox(height: 8),
+                Text(
+                  product.namaMenu,
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  "Stok: "+product.stokMenu.toString(),
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  product.deskripsiMenu,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                  style: TextStyle(fontSize: 12),
+                ),
+                SizedBox(height: 8),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+  void _showModal(BuildContext context, Menu product, int bookingId) {
     int quantity = 1;
 
     showModalBottomSheet(
@@ -139,10 +147,10 @@ class StoreCatalogPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('Order Product'),
+              Text('Order ${product.namaMenu}'), // Modal title
               SizedBox(height: 20),
               TextFormField(
-                initialValue: '1',
+                initialValue: '1', // Menggunakan '1' sebagai nilai awal
                 decoration: InputDecoration(
                   labelText: 'Quantity',
                   border: OutlineInputBorder(),
@@ -154,11 +162,16 @@ class StoreCatalogPage extends StatelessWidget {
               ),
               SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {
-                  print('Ordered $quantity products');
-                  Navigator.pop(context);
+                onPressed: () async {
+                  try {
+                    await ApiService.addCart(bookingId, product.id, quantity);
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Added to cart')));
+                    Navigator.pop(context); // Close modal
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to add to cart: $e')));
+                  }
                 },
-                child: Text('Order'),
+                child: Text('Order'), // Order button
               ),
             ],
           ),
@@ -166,4 +179,5 @@ class StoreCatalogPage extends StatelessWidget {
       },
     );
   }
+
 }

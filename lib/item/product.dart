@@ -1,7 +1,7 @@
 class Product {
   int id;
   String namaMenu;
-  double hargaMenu;
+  int hargaMenu;
   String deskripsiMenu;
   int stokMenu;
   int shopId;
@@ -25,7 +25,7 @@ class Product {
     return Product(
       id: json['id'],
       namaMenu: json['namaMenu'],
-      hargaMenu: json['hargaMenu'].toDouble(),
+      hargaMenu: json['hargaMenu'],
       deskripsiMenu: json['deskripsiMenu'],
       stokMenu: json['stokMenu'],
       shopId: json['shop_id'],
