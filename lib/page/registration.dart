@@ -71,7 +71,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       ),
                     ),
                     validator: (value) {
-                      if (value == null) {
+                      if (value == null || value.isEmpty) {
                         return 'Please enter your Nickname';
                       }
                       return null;
@@ -87,7 +87,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       ),
                     ),
                     validator: (value) {
-                      if (value!.isEmpty) {
+                      if (value == null || value.isEmpty) {
                         return 'Please enter your password';
                       } else if (value.length < 6) {
                         return 'Password must be at least 6 characters long';
@@ -106,7 +106,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       ),
                     ),
                     validator: (value) {
-                      if (value!.isEmpty) {
+                      if (value == null || value.isEmpty) {
                         return 'Please confirm your password';
                       } else if (value != _passwordController.text) {
                         return 'Passwords do not match';
@@ -125,7 +125,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       ),
                     ),
                     validator: (value) {
-                      if (value!.isEmpty) {
+                      if (value == null || value.isEmpty) {
                         return 'Please enter your Fullname';
                       }
                       return null;
@@ -142,7 +142,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     ),
                     keyboardType: TextInputType.number,
                     validator: (value) {
-                      if (value!.isEmpty) {
+                      if (value == null || value.isEmpty) {
                         return 'Please enter your phone number';
                       }
                       return null;
@@ -158,7 +158,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       ),
                     ),
                     validator: (value) {
-                      if (value!.isEmpty) {
+                      if (value == null || value.isEmpty) {
                         return 'Please enter your address';
                       }
                       return null;

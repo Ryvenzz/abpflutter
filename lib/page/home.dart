@@ -122,12 +122,11 @@ Widget _buildProductCard(BuildContext context, Product product) {
       // Add your onTap logic here
     },
     child: Container(
-
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: Colors.grey[300]!),
-         boxShadow: [
+        boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.25),
             spreadRadius: 2,
@@ -136,78 +135,86 @@ Widget _buildProductCard(BuildContext context, Product product) {
           ),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      child: Stack(
         children: <Widget>[
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
-              ),
-              // You can display product image here
-              child: Image.network(
-                product.imageMenu != null
-                  ? 'http://10.0.2.2:8001/api/${product.imageMenu}'
-                  : 'https://fivestar.sirv.com/example.jpg?profile=Example',
-                height: 400.0,
-                width: double.infinity,
+          // Background image
+          Container(
+            height: 400.0,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              image: DecorationImage(
+                image: NetworkImage(
+                  product.imageMenu != null
+                      ? 'http://10.0.2.2:8001/api/${product.imageMenu}'
+                      : 'https://fivestar.sirv.com/example.jpg?profile=Example',
+                ),
                 fit: BoxFit.cover,
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: Color.fromARGB(255, 236, 19, 4).withOpacity(0.8),
-                        borderRadius: BorderRadius.circular(4),
+          // Text and other content
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.8),
+                borderRadius: BorderRadius.vertical(bottom: Radius.circular(8)),
+              ),
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Color.fromARGB(255, 236, 19, 4).withOpacity(0.8),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text('\Rp.${product.hargaMenu}',
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
-                      child: Text('\Rp.${product.hargaMenu}',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.add),
-                      onPressed: () async {
-                        try {
-                          int? bookingId = await ApiService.getBookingIdByUser();
-                          if (bookingId == null) {
-                            // Handle the case where the booking ID is not found
-                            throw Exception('Booking ID not found');
+                      IconButton(
+                        icon: Icon(Icons.add),
+                        onPressed: () async {
+                          try {
+                            int? bookingId = await ApiService.getBookingIdByUser();
+                            if (bookingId == null) {
+                              // Handle the case where the booking ID is not found
+                              throw Exception('Booking ID not found');
+                            }
+                            _showModal(context, product, bookingId);
+                          } catch (e) {
+                            // Handle any errors that occur
+                            print('Error: $e');
                           }
-                          _showModal(context, product, bookingId);
-                        } catch (e) {
-                          // Handle any errors that occur
-                          print('Error: $e');
-                        }
-                      },
-                    ),
-                  ],
-                ),
-                SizedBox(height: 8),
-                Text(
-                  product.namaMenu,
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  "Stok: "+product.stokMenu.toString(),
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  product.deskripsiMenu,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 2,
-                  style: TextStyle(fontSize: 12),
-                ),
-                SizedBox(height: 8),
-              ],
+                        },
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    product.namaMenu,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    "Stok: "+product.stokMenu.toString(),
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    product.deskripsiMenu,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
+                    style: TextStyle(fontSize: 12),
+                  ),
+                  SizedBox(height: 8),
+                ],
+              ),
             ),
           ),
         ],
@@ -215,6 +222,10 @@ Widget _buildProductCard(BuildContext context, Product product) {
     ),
   );
 }
+
+
+
+
 
   void _showModal(BuildContext context, Product product, int bookingId) {
     int quantity = 1;
