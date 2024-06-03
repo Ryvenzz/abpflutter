@@ -2,11 +2,12 @@ import 'dart:convert';
 import 'dart:ffi';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import '../item/Product.dart';
+import '../item/product.dart';
 import '../item/Shop.dart';
 import '../item/menushop.dart';
 import '../item/booking.dart';
 import '../item/menubooking.dart';
+import '../item/productresponse.dart';
 
 class ApiService {
   static const String MenuUrl = 'http://10.0.2.2:8000/api/menu/all';
@@ -18,14 +19,36 @@ class ApiService {
 
 
   //Get All Menu
-  static Future<List<Product>> fetchProduct() async {
+  static Future<ProductResponse> fetchProduct() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+
+      if (token == null) {
+        // Handle the case where the token is not found
+        throw Exception('User not authenticated');
+      }
+      final response2 = await http.post(
+        Uri.parse('http://10.0.2.2:8000/api/user/info'),
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+      print("cek userid ${response2.body}");
+      var jsonResponse2 = jsonDecode(response2.body);
+      final String nickname = jsonResponse2['data']['nickname'];
+
+    // Panggil endpoint untuk mendapatkan daftar produk
     final response = await http.get(Uri.parse(MenuUrl));
 
     if (response.statusCode == 200) {
       var jsonResponse = jsonDecode(response.body);
       List<dynamic> data = jsonResponse['data'];
       List<Product> products = data.map((item) => Product.fromJson(item)).toList();
-      return products;
+      print(products);
+      print(nickname);
+      // Return ProductResponse yang berisi nickname dan daftar produk
+      return ProductResponse(nickname: nickname, products: products);
     } else {
       throw Exception('Failed to load menus');
     }

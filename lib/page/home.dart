@@ -3,7 +3,8 @@ import 'package:abp/page/shop_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import '../API/api_service.dart';
-import '../item/Product.dart';
+import '../item/product.dart';
+import '../item/productresponse.dart';
 
 class _HomePage extends StatelessWidget {
   @override
@@ -70,45 +71,50 @@ class HomePage extends StatelessWidget {
   }
 
   Widget _buildBestSelling() {
-  return FutureBuilder<List<Product>>(
-    future: ApiService.fetchProduct(),
-    builder: (context, snapshot) {
-      if (snapshot.connectionState == ConnectionState.waiting) {
-        return Center(child: CircularProgressIndicator());
-      } else if (snapshot.hasError) {
-        return Center(child: Text('Error: ${snapshot.error}'));
-      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-        return Center(child: Text('No products found'));
-      } else {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(
-              'Hi ..., mau makan apa hari ini?',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 10),
-            GridView.builder(
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 0.75,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
+    return FutureBuilder<ProductResponse>(
+      future: ApiService.fetchProduct(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else if (!snapshot.hasData || snapshot.data!.products.isEmpty) {
+          return Center(child: Text('No products found'));
+        } else {
+          ProductResponse productResponse = snapshot.data!;
+          String nickname = productResponse.nickname;
+          List<Product> products = productResponse.products;
+          print(nickname);
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                'Hai $nickname, mau makan apa hari ini?',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
-              itemCount: snapshot.data!.length,
-              itemBuilder: (context, index) {
-                Product product = snapshot.data![index];
-                return _buildProductCard(context, product);
-              },
-            ),
-          ],
-        );
-      }
-    },
-  );
-}
+              SizedBox(height: 10),
+              GridView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: 0.75,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                ),
+                itemCount: products.length,
+                itemBuilder: (context, index) {
+                  Product product = products[index];
+                  return _buildProductCard(context, product);
+                },
+              ),
+            ],
+          );
+        }
+      },
+    );
+  }
+
 
 Widget _buildProductCard(BuildContext context, Product product) {
   return GestureDetector(
@@ -116,6 +122,7 @@ Widget _buildProductCard(BuildContext context, Product product) {
       // Add your onTap logic here
     },
     child: Container(
+
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(8),
@@ -138,7 +145,14 @@ Widget _buildProductCard(BuildContext context, Product product) {
                 borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
               ),
               // You can display product image here
-              // Example: Image.network(product.imageMenu),
+              child: Image.network(
+                product.imageMenu != null
+                  ? 'http://10.0.2.2:8001/api/${product.imageMenu}'
+                  : 'https://fivestar.sirv.com/example.jpg?profile=Example',
+                height: 400.0,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
             ),
           ),
           Padding(
