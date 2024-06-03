@@ -216,66 +216,68 @@ class _RegistrationPageState extends State<RegistrationPage> {
     );
   }
 
-  void _registerUser() async {
-  String nickname = _nicknameController.text;
-  String password = _passwordController.text;
-  String fullName = _fullNameController.text;
-  String phoneNumber = _phoneNumberController.text;
-  String address = _addressController.text;
-  String role = 'Buyer'; // Default role for registration
+  void _registerUser() {
+    if (_formKey.currentState!.validate()) {
+      // Jika formulir valid, lanjutkan dengan proses registrasi
+      String nickname = _nicknameController.text;
+      String password = _passwordController.text;
+      String fullName = _fullNameController.text;
+      String phoneNumber = _phoneNumberController.text;
+      String address = _addressController.text;
+      String role = 'Buyer'; // Default role for registration
 
-  try {
-    // Mencoba melakukan registrasi
-    await ApiService.registerUser(
-      nickname: nickname,
-      password: password,
-      fullName: fullName,
-      phoneNumber: phoneNumber,
-      role: role,
-      address: address,
-    );
-
-    // Registrasi berhasil, kembali ke halaman login
-    _showSuccessDialog();
-  } catch (e) {
-    // Registrasi gagal, tampilkan pesan kesalahan
-    _showErrorDialog();
+      ApiService.registerUser(
+        nickname: nickname,
+        password: password,
+        fullName: fullName,
+        phoneNumber: phoneNumber,
+        role: role,
+        address: address,
+      ).then((_) {
+        // Registrasi berhasil, tampilkan dialog sukses
+        _showSuccessDialog();
+      }).catchError((e) {
+        // Registrasi gagal, tampilkan pesan kesalahan
+        _showErrorDialog(e);
+      });
+    }
   }
-}
 
-void _showSuccessDialog() {
-  showDialog(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: Text('Registration Successful'),
-      content: Text('You have successfully registered.'),
-      actions: [
-        TextButton(
-          onPressed: () {
-            Navigator.pop(context); // Tutup dialog
-            Navigator.pushReplacementNamed(context, '/login'); // Kembali ke halaman login
-          },
-          child: Text('OK'),
-        ),
-      ],
-    ),
-  );
-}
 
-void _showErrorDialog() {
-  showDialog(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: Text('Registration Failed'),
-      content: Text('Failed to register user. Please try again.'),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text('OK'),
-        ),
-      ],
-    ),
-  );
-}
+  void _showSuccessDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Registration Successful'),
+        content: Text('You have successfully registered.'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context); // Tutup dialog
+              Navigator.pushReplacementNamed(context, '/login'); // Kembali ke halaman login
+            },
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showErrorDialog(e) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Registration Failed'),
+        // content: Text('Failed to register user. Please try again.'),
+        content: Text(e.toString()),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
 
 }

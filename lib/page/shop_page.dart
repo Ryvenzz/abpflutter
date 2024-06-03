@@ -55,6 +55,14 @@ class ShopPage extends StatelessWidget {
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(8),
+                              image: DecorationImage(
+                                image: NetworkImage(
+                                  shop.image != null
+                                      ? 'http://10.0.2.2:8001/api/${shop.image}'
+                                      : '',
+                                ),
+                                fit: BoxFit.cover,
+                              ),
                               border: Border.all(color: Colors.grey[300]!),
                               boxShadow: [
                                 BoxShadow(
@@ -66,8 +74,9 @@ class ShopPage extends StatelessWidget {
                               ],
                             ),
                             child: Center(
-                              child: Text('${shop.namaToko}'),
-
+                              child: Text(
+                                shop.image != null ? '' : shop.namaToko,
+                              ),
                             ),
                           ),
                         );

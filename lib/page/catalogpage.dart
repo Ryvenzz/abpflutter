@@ -54,7 +54,7 @@ class CatalogPage extends StatelessWidget {
     );
   }
 
-  Widget _buildProductCard(BuildContext context, Menu product) {
+  Widget _buildProductCard(BuildContext context, Menu Menu) {
   return GestureDetector(
     onTap: () {
       // Add your onTap logic here
@@ -82,8 +82,8 @@ class CatalogPage extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
               image: DecorationImage(
                 image: NetworkImage(
-                  product.imageMenu != null
-                      ? 'http://10.0.2.2:8001/api/${product.imageMenu}'
+                  Menu.imageMenu != null
+                      ? 'http://10.0.2.2:8001/api/${Menu.imageMenu}'
                       : 'https://fivestar.sirv.com/example.jpg?profile=Example',
                 ),
                 fit: BoxFit.cover,
@@ -113,7 +113,7 @@ class CatalogPage extends StatelessWidget {
                           color: Color.fromARGB(255, 236, 19, 4).withOpacity(0.8),
                           borderRadius: BorderRadius.circular(4),
                         ),
-                        child: Text('\Rp.${product.hargaMenu}',
+                        child: Text('\Rp.${Menu.hargaMenu}',
                           style: TextStyle(color: Colors.white),
                         ),
                       ),
@@ -126,7 +126,7 @@ class CatalogPage extends StatelessWidget {
                               // Handle the case where the booking ID is not found
                               throw Exception('Booking ID not found');
                             }
-                            _showModal(context, product, bookingId);
+                            _showModal(context, Menu, bookingId);
                           } catch (e) {
                             // Handle any errors that occur
                             print('Error: $e');
@@ -137,15 +137,15 @@ class CatalogPage extends StatelessWidget {
                   ),
                   SizedBox(height: 8),
                   Text(
-                    product.namaMenu,
+                    Menu.namaMenu,
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    "Stok: "+product.stokMenu.toString(),
+                    "Stok: "+Menu.stokMenu.toString(),
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    product.deskripsiMenu,
+                    Menu.deskripsiMenu,
                     overflow: TextOverflow.ellipsis,
                     maxLines: 2,
                     style: TextStyle(fontSize: 12),
