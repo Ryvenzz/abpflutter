@@ -24,11 +24,17 @@ class _RegistrationPageState extends State<RegistrationPage> {
           child: Container(
             padding: EdgeInsets.all(16.0),
             decoration: BoxDecoration(
+              color: Colors.white,
               borderRadius: BorderRadius.circular(8.0),
-              border: Border.all(
-                color: Colors.grey,
-                width: 1.0,
-              ),
+              border: Border.all(color: Colors.grey[300]!),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.25),
+                  spreadRadius: 2,
+                  blurRadius: 5,
+                  offset: Offset(0, 3), // changes position of shadow
+                ),
+              ],
             ),
             child: Form(
               key: _formKey,
@@ -65,7 +71,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       ),
                     ),
                     validator: (value) {
-                      if (value!.isEmpty) {
+                      if (value == null || value.isEmpty) {
                         return 'Please enter your Nickname';
                       }
                       return null;
@@ -81,7 +87,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       ),
                     ),
                     validator: (value) {
-                      if (value!.isEmpty) {
+                      if (value == null || value.isEmpty) {
                         return 'Please enter your password';
                       } else if (value.length < 6) {
                         return 'Password must be at least 6 characters long';
@@ -100,7 +106,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       ),
                     ),
                     validator: (value) {
-                      if (value!.isEmpty) {
+                      if (value == null || value.isEmpty) {
                         return 'Please confirm your password';
                       } else if (value != _passwordController.text) {
                         return 'Passwords do not match';
@@ -119,7 +125,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       ),
                     ),
                     validator: (value) {
-                      if (value!.isEmpty) {
+                      if (value == null || value.isEmpty) {
                         return 'Please enter your Fullname';
                       }
                       return null;
@@ -136,7 +142,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     ),
                     keyboardType: TextInputType.number,
                     validator: (value) {
-                      if (value!.isEmpty) {
+                      if (value == null || value.isEmpty) {
                         return 'Please enter your phone number';
                       }
                       return null;
@@ -152,7 +158,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       ),
                     ),
                     validator: (value) {
-                      if (value!.isEmpty) {
+                      if (value == null || value.isEmpty) {
                         return 'Please enter your address';
                       }
                       return null;
@@ -210,66 +216,68 @@ class _RegistrationPageState extends State<RegistrationPage> {
     );
   }
 
-  void _registerUser() async {
-  String nickname = _nicknameController.text;
-  String password = _passwordController.text;
-  String fullName = _fullNameController.text;
-  String phoneNumber = _phoneNumberController.text;
-  String address = _addressController.text;
-  String role = 'Buyer'; // Default role for registration
+  void _registerUser() {
+    if (_formKey.currentState!.validate()) {
+      // Jika formulir valid, lanjutkan dengan proses registrasi
+      String nickname = _nicknameController.text;
+      String password = _passwordController.text;
+      String fullName = _fullNameController.text;
+      String phoneNumber = _phoneNumberController.text;
+      String address = _addressController.text;
+      String role = 'Buyer'; // Default role for registration
 
-  try {
-    // Mencoba melakukan registrasi
-    await ApiService.registerUser(
-      nickname: nickname,
-      password: password,
-      fullName: fullName,
-      phoneNumber: phoneNumber,
-      role: role,
-      address: address,
-    );
-
-    // Registrasi berhasil, kembali ke halaman login
-    _showSuccessDialog();
-  } catch (e) {
-    // Registrasi gagal, tampilkan pesan kesalahan
-    _showErrorDialog();
+      ApiService.registerUser(
+        nickname: nickname,
+        password: password,
+        fullName: fullName,
+        phoneNumber: phoneNumber,
+        role: role,
+        address: address,
+      ).then((_) {
+        // Registrasi berhasil, tampilkan dialog sukses
+        _showSuccessDialog();
+      }).catchError((e) {
+        // Registrasi gagal, tampilkan pesan kesalahan
+        _showErrorDialog(e);
+      });
+    }
   }
-}
 
-void _showSuccessDialog() {
-  showDialog(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: Text('Registration Successful'),
-      content: Text('You have successfully registered.'),
-      actions: [
-        TextButton(
-          onPressed: () {
-            Navigator.pop(context); // Tutup dialog
-            Navigator.pushReplacementNamed(context, '/login'); // Kembali ke halaman login
-          },
-          child: Text('OK'),
-        ),
-      ],
-    ),
-  );
-}
 
-void _showErrorDialog() {
-  showDialog(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: Text('Registration Failed'),
-      content: Text('Failed to register user. Please try again.'),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text('OK'),
-        ),
-      ],
-    ),
-  );
-}
+  void _showSuccessDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Registration Successful'),
+        content: Text('You have successfully registered.'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context); // Tutup dialog
+              Navigator.pushReplacementNamed(context, '/login'); // Kembali ke halaman login
+            },
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showErrorDialog(e) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Registration Failed'),
+        // content: Text('Failed to register user. Please try again.'),
+        content: Text(e.toString()),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
 
 }

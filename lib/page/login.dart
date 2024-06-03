@@ -43,11 +43,17 @@ class _LoginPageState extends State<LoginPage> {
           child: Container(
             padding: EdgeInsets.all(16.0),
             decoration: BoxDecoration(
+              color: Colors.white,
               borderRadius: BorderRadius.circular(8.0),
-              border: Border.all(
-                color: Colors.grey,
-                width: 1.0,
-              ),
+              border: Border.all(color: Colors.grey[300]!),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.25),
+                  spreadRadius: 2,
+                  blurRadius: 5,
+                  offset: Offset(0, 3), // changes position of shadow
+                ),
+              ],
             ),
             child: Form(
               key: _formKey,
@@ -108,6 +114,13 @@ class _LoginPageState extends State<LoginPage> {
                     },
                   ),
                   SizedBox(height: 20.0),
+                  if (_errorMessage.isNotEmpty)
+                    Text(
+                      _errorMessage,
+                      style: TextStyle(color: Colors.red),
+                    ), 
+                  SizedBox(height: 20.0),
+                   
                   Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8.0),
@@ -136,6 +149,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   SizedBox(height: 20.0),
+                  
                   GestureDetector(
                     onTap: () {
                       // Navigate to registration page
@@ -151,11 +165,6 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   SizedBox(height: 8.0),
-                  if (_errorMessage.isNotEmpty)
-                    Text(
-                      _errorMessage,
-                      style: TextStyle(color: Colors.red),
-                    ),
                 ],
               ),
             ),
