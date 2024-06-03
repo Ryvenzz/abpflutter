@@ -30,6 +30,7 @@ class CatalogPage extends StatelessWidget {
               children: <Widget>[
                 SizedBox(height: 10),
                 GridView.builder(
+                  padding: EdgeInsets.all(16.0),
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -49,6 +50,7 @@ class CatalogPage extends StatelessWidget {
           }
         },
       ),
+      bottomNavigationBar: _buildBottomNavigationBar(context),
     );
   }
 
@@ -59,8 +61,17 @@ class CatalogPage extends StatelessWidget {
     },
     child: Container(
       decoration: BoxDecoration(
+        color: Colors.white,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: Colors.grey[300]!),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.25),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: Offset(0, 3), // changes position of shadow
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -176,6 +187,47 @@ class CatalogPage extends StatelessWidget {
             ],
           ),
         );
+      },
+    );
+  }
+
+  Widget _buildBottomNavigationBar(BuildContext context) {
+    return BottomNavigationBar(
+      items: const [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          label: 'Home',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.store),
+          label: 'Store',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.shopping_basket),
+          label: 'Cart',
+        ),
+      ],
+      selectedItemColor: Color.fromARGB(255, 250, 248, 248).withOpacity(0.8),
+      unselectedItemColor: Colors.grey,
+      backgroundColor: const Color.fromRGBO(134, 28, 30, 1),
+      onTap: (index) {
+        switch (index) {
+          case 0:
+            Navigator.pushNamed(
+              context, '/home'
+            );
+            return;
+          case 1:
+            Navigator.pushNamed(
+              context, '/store'
+            );
+            return;
+          case 2:
+            Navigator.pushNamed(
+              context, '/cart'
+            );
+            return;
+        }
       },
     );
   }

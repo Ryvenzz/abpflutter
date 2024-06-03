@@ -108,6 +108,13 @@ class _LoginPageState extends State<LoginPage> {
                     },
                   ),
                   SizedBox(height: 20.0),
+                  if (_errorMessage.isNotEmpty)
+                    Text(
+                      _errorMessage,
+                      style: TextStyle(color: Colors.red),
+                    ), 
+                  SizedBox(height: 20.0),
+                   
                   Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8.0),
@@ -136,6 +143,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   SizedBox(height: 20.0),
+                  
                   GestureDetector(
                     onTap: () {
                       // Navigate to registration page
@@ -151,11 +159,6 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   SizedBox(height: 8.0),
-                  if (_errorMessage.isNotEmpty)
-                    Text(
-                      _errorMessage,
-                      style: TextStyle(color: Colors.red),
-                    ),
                 ],
               ),
             ),

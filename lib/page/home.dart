@@ -1,3 +1,5 @@
+import 'package:abp/page/cartpage.dart';
+import 'package:abp/page/shop_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import '../API/api_service.dart';
@@ -28,20 +30,6 @@ class HomePage extends StatelessWidget {
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.store),
-            color: Colors.white,
-            onPressed: () {
-              Navigator.pushNamed(context, '/store');
-            },
-          ),
-          IconButton(
-            icon: Icon(Icons.shopping_basket),
-            color: Colors.white,
-            onPressed: () {
-              Navigator.pushNamed(context, '/cart');
-            },
-          ),
-          IconButton(
             icon: Icon(Icons.history),
             color: Colors.white,
             onPressed: (){
@@ -59,9 +47,8 @@ class HomePage extends StatelessWidget {
               } catch (e) {
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Logout failed: $e')));
               }
-            },
-          ),
-          
+            }, 
+           ),
         ],
       ),
       body: SingleChildScrollView(
@@ -74,10 +61,11 @@ class HomePage extends StatelessWidget {
             // _buildStores(context),
             // SizedBox(height: 20),
             _buildBestSelling(),
+            
           ],
         ),
       ),
-      // bottomNavigationBar: _buildBottomNavigationBar(),
+      bottomNavigationBar: _buildBottomNavigationBar(context),
     );
   }
 
@@ -96,7 +84,7 @@ class HomePage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              'Menu',
+              'Hi ..., mau makan apa hari ini?',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 10),
@@ -129,8 +117,17 @@ Widget _buildProductCard(BuildContext context, Product product) {
     },
     child: Container(
       decoration: BoxDecoration(
+        color: Colors.white,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: Colors.grey[300]!),
+         boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.25),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: Offset(0, 3), // changes position of shadow
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -246,6 +243,47 @@ Widget _buildProductCard(BuildContext context, Product product) {
             ],
           ),
         );
+      },
+    );
+  }
+
+  Widget _buildBottomNavigationBar(BuildContext context) {
+    return BottomNavigationBar(
+      items: const [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          label: 'Home',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.store),
+          label: 'Store',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.shopping_basket),
+          label: 'Cart',
+        ),
+      ],
+      selectedItemColor: Color.fromARGB(255, 250, 248, 248).withOpacity(0.8),
+      unselectedItemColor: Colors.grey,
+      backgroundColor: const Color.fromRGBO(134, 28, 30, 1),
+      onTap: (index) {
+        switch (index) {
+          case 0:
+            Navigator.pushNamed(
+              context, '/home'
+            );
+            return;
+          case 1:
+            Navigator.pushNamed(
+              context, '/store'
+            );
+            return;
+          case 2:
+            Navigator.pushNamed(
+              context, '/cart'
+            );
+            return;
+        }
       },
     );
   }
