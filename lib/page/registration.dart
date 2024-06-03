@@ -71,7 +71,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       ),
                     ),
                     validator: (value) {
-                      if (value!.isEmpty) {
+                      if (value == null) {
                         return 'Please enter your Nickname';
                       }
                       return null;
