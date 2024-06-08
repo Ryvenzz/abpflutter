@@ -84,6 +84,62 @@ class _PageBookingState extends State<PageBooking> {
           }
         },
       ),
+      bottomNavigationBar: _buildBottomNavigationBar(context),
     );
   }
 }
+
+Widget _buildBottomNavigationBar(BuildContext context) {
+    return BottomNavigationBar(
+      
+      type: BottomNavigationBarType.fixed,
+      backgroundColor: const Color.fromRGBO(134, 28, 30, 1),
+      selectedItemColor: Color.fromARGB(255, 250, 248, 248).withOpacity(0.8),
+      unselectedItemColor: Colors.grey,
+      currentIndex: 3,
+      items: const [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          label: 'Home',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.store),
+          label: 'Store',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.shopping_basket),
+          label: 'Cart',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.history),
+          label: 'History',
+        ),
+      ],
+      
+      
+      onTap: (index) {
+        switch (index) {
+          case 0:
+            Navigator.pushNamed(
+              context, '/home'
+            );
+            return;
+          case 1:
+            Navigator.pushNamed(
+              context, '/store'
+            );
+            return;
+          case 2:
+            Navigator.pushNamed(
+              context, '/cart'
+            );
+            return;
+          case 3:
+            Navigator.pushNamed(
+              context, '/invoice'
+            );
+            return;
+        }
+      },
+    );
+  }

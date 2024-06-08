@@ -223,6 +223,12 @@ class _CartPageState extends State<CartPage> {
   
   Widget _buildBottomNavigationBar(BuildContext context) {
     return BottomNavigationBar(
+      
+      type: BottomNavigationBarType.fixed,
+      backgroundColor: const Color.fromRGBO(134, 28, 30, 1),
+      selectedItemColor: Color.fromARGB(255, 250, 248, 248).withOpacity(0.8),
+      unselectedItemColor: Colors.grey,
+      currentIndex: 2,
       items: const [
         BottomNavigationBarItem(
           icon: Icon(Icons.home),
@@ -236,10 +242,13 @@ class _CartPageState extends State<CartPage> {
           icon: Icon(Icons.shopping_basket),
           label: 'Cart',
         ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.history),
+          label: 'History',
+        ),
       ],
-      selectedItemColor: Color.fromARGB(255, 250, 248, 248).withOpacity(0.8),
-      unselectedItemColor: Colors.grey,
-      backgroundColor: const Color.fromRGBO(134, 28, 30, 1),
+      
+      
       onTap: (index) {
         switch (index) {
           case 0:
@@ -255,6 +264,11 @@ class _CartPageState extends State<CartPage> {
           case 2:
             Navigator.pushNamed(
               context, '/cart'
+            );
+            return;
+          case 3:
+            Navigator.pushNamed(
+              context, '/invoice'
             );
             return;
         }

@@ -92,28 +92,33 @@ class ShopPage extends StatelessWidget {
       bottomNavigationBar: _buildBottomNavigationBar(context),
     );
   }
-
   Widget _buildBottomNavigationBar(BuildContext context) {
-    return BottomNavigationBar(
-      items: const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          label: 'Home',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.store),
-          label: 'Store',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.shopping_basket),
-          label: 'Cart',
-        ),
-      ],
-      selectedItemColor: Color.fromARGB(255, 250, 248, 248).withOpacity(0.8),
-      unselectedItemColor: Colors.grey,
-      backgroundColor: const Color.fromRGBO(134, 28, 30, 1),
-      onTap: (index) {
-        switch (index) {
+      return BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: const Color.fromRGBO(134, 28, 30, 1), // Menambahkan warna latar belakang
+        selectedItemColor: Colors.white, // Warna ikon yang dipilih
+        unselectedItemColor: Colors.grey,
+        currentIndex: 1,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.store),
+            label: 'Store',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_basket),
+            label: 'Cart',
+          ),BottomNavigationBarItem(
+            icon: Icon(Icons.history),
+            label: 'History',
+          ),
+        ],
+        
+        onTap: (index) {
+          switch (index) {
           case 0:
             Navigator.pushNamed(
               context, '/home'
@@ -129,6 +134,10 @@ class ShopPage extends StatelessWidget {
               context, '/cart'
             );
             return;
+          case 3:
+            Navigator.pushNamed(
+              context, '/invoice'
+            );
         }
       },
     );

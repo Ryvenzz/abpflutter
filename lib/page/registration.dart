@@ -193,6 +193,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       ),
                     ),
                   ),
+                  SizedBox(height: 20.0),
                   GestureDetector(
                     onTap: () {
                       // Pindah ke halaman registrasi
@@ -207,6 +208,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       ),
                     ),
                   ),
+                  SizedBox(height: 8.0),
                 ],
               ),
             ),

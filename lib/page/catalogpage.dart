@@ -50,7 +50,6 @@ class CatalogPage extends StatelessWidget {
           }
         },
       ),
-      bottomNavigationBar: _buildBottomNavigationBar(context),
     );
   }
 
@@ -204,46 +203,4 @@ class CatalogPage extends StatelessWidget {
       },
     );
   }
-
-  Widget _buildBottomNavigationBar(BuildContext context) {
-    return BottomNavigationBar(
-      items: const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          label: 'Home',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.store),
-          label: 'Store',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.shopping_basket),
-          label: 'Cart',
-        ),
-      ],
-      selectedItemColor: Color.fromARGB(255, 250, 248, 248).withOpacity(0.8),
-      unselectedItemColor: Colors.grey,
-      backgroundColor: const Color.fromRGBO(134, 28, 30, 1),
-      onTap: (index) {
-        switch (index) {
-          case 0:
-            Navigator.pushNamed(
-              context, '/home'
-            );
-            return;
-          case 1:
-            Navigator.pushNamed(
-              context, '/store'
-            );
-            return;
-          case 2:
-            Navigator.pushNamed(
-              context, '/cart'
-            );
-            return;
-        }
-      },
-    );
-  }
-
 }
