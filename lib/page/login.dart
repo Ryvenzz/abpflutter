@@ -25,7 +25,7 @@ class _LoginPageState extends State<LoginPage> {
         );
 
         // On successful login, navigate to home page
-        Navigator.pushReplacementNamed(context, '/home', arguments: {'token': token});
+        Navigator.pushReplacementNamed(context, '/main', arguments: {'token': token});
       } catch (e) {
         setState(() {
           _errorMessage = e.toString();

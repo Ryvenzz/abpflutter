@@ -129,6 +129,7 @@ class ApiService {
             throw Exception('Unexpected response format');
           }
         } else {
+          print("cek1"+jsonResponse);
           throw Exception(jsonResponse['message']);
         }
       } else {
@@ -136,7 +137,15 @@ class ApiService {
       }
     } catch (e) {
       print('Error: $e');
-      throw Exception('Failed to login due to an exception');
+      if (e.toString() == 'Exception: Failed to login: Unauthorized') {
+        throw 'Salah username atau password';
+      } else if (e.toString() == 'Exception: This account already logged in') {
+        throw 'User sudah login di device lain';
+      }else if (e.toString() == 'Exception: User not found') {
+          throw 'Nickname pengguna tidak ditemukan';
+      }else{
+        throw Exception('$e');
+      }
     }
   }
 
@@ -150,31 +159,43 @@ class ApiService {
     required String address,
   }) 
   async {
+    try{
 
-    print(nickname + ' ' + password + ' ' + fullName + ' ' + role);
-    final Map<String, String> requestBody = {
-      'nickname': nickname,
-      'password': password,
-      'fullName': fullName,
-      'phoneNumber': phoneNumber,
-      'role': role,
-      'address': address,
-    };
-    print(requestBody);
+    
+      print(nickname + ' ' + password + ' ' + fullName + ' ' + role);
+      final Map<String, String> requestBody = {
+        'nickname': nickname,
+        'password': password,
+        'fullName': fullName,
+        'phoneNumber': phoneNumber,
+        'role': role,
+        'address': address,
+      };
+      print(requestBody);
 
-      final response = await http.post(
-        Uri.parse(RegisterUrl),
-        body: requestBody,
-        headers: {'Accept': 'application/json'},
-      );
-    print(response.statusCode);
-    print(response.body);
-    if (response.statusCode == 201) {
-      // Successful registration
-      return jsonDecode(response.body);
-    } else {
-      // Registration failed
-      throw Exception('Failed to register user');
+        final response = await http.post(
+          Uri.parse(RegisterUrl),
+          body: requestBody,
+          headers: {'Accept': 'application/json'},
+        );
+      String responseJson = '{"status":"error","message":"The nickname has already been taken."}';
+      Map<String, dynamic> responseObject = jsonDecode(responseJson);
+      String message = responseObject["message"];
+      print(message);
+      
+      if (response.statusCode == 201) {
+        // Successful registration
+        return jsonDecode(response.body);
+      } else {
+        // Registration failed
+        if (message == 'The nickname has already been taken.') {
+          throw ('Nickname sudah digunakan, mohon ganti');
+        } else {
+          throw ('Mohon input dengan benar');
+        }
+    }
+    }catch(e){
+      throw Exception('$e');
     }
   }
 

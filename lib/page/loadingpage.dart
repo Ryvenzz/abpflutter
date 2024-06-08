@@ -6,7 +6,7 @@ class loadingPage extends StatelessWidget{
     return Scaffold(
       body: Center(
         child: Image.asset(
-          '../aset/1.png',
+          '../aset/uhuy.png',
           fit: BoxFit.contain
         )
       )

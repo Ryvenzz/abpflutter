@@ -20,9 +20,13 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Telyu Canteen',
-          style: TextStyle(color: Colors.white),
+        title: Row(
+          children: <Widget>[
+            Image.asset(
+              'aset/1.png',
+              height:50
+            )
+          ],
         ),
         flexibleSpace: Container(
           decoration: BoxDecoration(
@@ -30,13 +34,13 @@ class HomePage extends StatelessWidget {
           ),
         ),
         actions: [
-          IconButton(
-            icon: Icon(Icons.history),
-            color: Colors.white,
-            onPressed: (){
-              Navigator.pushNamed(context, '/invoice');
-            },
-          ),
+          // IconButton(
+          //   icon: Icon(Icons.history),
+          //   color: Colors.white,
+          //   onPressed: (){
+          //     Navigator.pushNamed(context, '/invoice');
+          //   },
+          // ),
           IconButton(
             icon: Icon(Icons.logout),
             color: Colors.white,
@@ -66,7 +70,7 @@ class HomePage extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: _buildBottomNavigationBar(context),
+      // bottomNavigationBar: _buildBottomNavigationBar(context),
     );
   }
 
@@ -270,48 +274,5 @@ Widget _buildProductCard(BuildContext context, Product product) {
         );
       },
     );
-  }
-
-  Widget _buildBottomNavigationBar(BuildContext context) {
-    return BottomNavigationBar(
-      items: const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          label: 'Home',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.store),
-          label: 'Store',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.shopping_basket),
-          label: 'Cart',
-        ),
-      ],
-      selectedItemColor: Color.fromARGB(255, 250, 248, 248).withOpacity(0.8),
-      unselectedItemColor: Colors.grey,
-      backgroundColor: const Color.fromRGBO(134, 28, 30, 1),
-      onTap: (index) {
-        switch (index) {
-          case 0:
-            Navigator.pushNamed(
-              context, '/home'
-            );
-            return;
-          case 1:
-            Navigator.pushNamed(
-              context, '/store'
-            );
-            return;
-          case 2:
-            Navigator.pushNamed(
-              context, '/cart'
-            );
-            return;
-        }
-      },
-    );
-  }
-
-  
+  } 
 }
