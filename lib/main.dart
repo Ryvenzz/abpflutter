@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
       home: ImagePage(),
       routes: {
       '/home': (context) => HomePage(),
-      '/main': (context)=> MainLayout(),
+      // '/main': (context)=> MainLayout(),
       '/login': (context) => LoginPage(),
       '/registration': (context) => RegistrationPage(),
       '/store': (context) => ShopPage(),
@@ -87,67 +87,63 @@ class ImagePage extends StatelessWidget {
   }
 }
 
-class MainLayout extends StatefulWidget {
-  @override
-  _MainLayoutState createState() => _MainLayoutState();
-}
+// class MainLayout extends StatefulWidget {
+//   @override
+//   _MainLayoutState createState() => _MainLayoutState();
+// }
 
-class _MainLayoutState extends State<MainLayout> {
-  int _currentIndex = 0;
+// class _MainLayoutState extends State<MainLayout> {
+//   int _currentIndex = 0;
 
-  final List<Widget> _children = [
-    HomePage(),
-    ShopPage(),
-    CartPage(),
-    PageBooking(),
-  ];
+//   final List<Widget> _children = [
+//     HomePage(),
+//     ShopPage(),
+//     CartPage(),
+//     PageBooking(),
+//   ];
 
-  void onTabTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
+//   void onTabTapped(int index) {
+//     setState(() {
+//       _currentIndex = index;
+//     });
+//   }
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       body: IndexedStack(
+//         index: _currentIndex,
+//         children: _children,
+//       ),
+//       bottomNavigationBar: _buildBottomNavigationBar(context),
+//     );
+//   }
 
-  }
-
-  
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: IndexedStack(
-        index: _currentIndex,
-        children: _children,
-      ),
-      bottomNavigationBar: _buildBottomNavigationBar(context),
-    );
-  }
-
-  Widget _buildBottomNavigationBar(BuildContext context) {
-    return BottomNavigationBar(
-      type: BottomNavigationBarType.fixed,
-      backgroundColor: const Color.fromRGBO(134, 28, 30, 1),
-      selectedItemColor: Color.fromARGB(255, 250, 248, 248).withOpacity(0.8),
-      unselectedItemColor: Colors.grey,
-      currentIndex: _currentIndex,
-      items: const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          label: 'Home',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.store),
-          label: 'Store',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.shopping_basket),
-          label: 'Cart',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.history),
-          label: 'History',
-        ),
-      ],
-      onTap: onTabTapped,
-    );
-  }
-}
+//   Widget _buildBottomNavigationBar(BuildContext context) {
+//     return BottomNavigationBar(
+//       type: BottomNavigationBarType.fixed,
+//       backgroundColor: const Color.fromRGBO(134, 28, 30, 1),
+//       selectedItemColor: Color.fromARGB(255, 250, 248, 248).withOpacity(0.8),
+//       unselectedItemColor: Colors.grey,
+//       currentIndex: _currentIndex,
+//       items: const [
+//         BottomNavigationBarItem(
+//           icon: Icon(Icons.home),
+//           label: 'Home',
+//         ),
+//         BottomNavigationBarItem(
+//           icon: Icon(Icons.store),
+//           label: 'Store',
+//         ),
+//         BottomNavigationBarItem(
+//           icon: Icon(Icons.shopping_basket),
+//           label: 'Cart',
+//         ),
+//         BottomNavigationBarItem(
+//           icon: Icon(Icons.history),
+//           label: 'History',
+//         ),
+//       ],
+//       onTap: onTabTapped,
+//     );
+//   }
+// }

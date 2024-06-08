@@ -34,13 +34,6 @@ class HomePage extends StatelessWidget {
           ),
         ),
         actions: [
-          // IconButton(
-          //   icon: Icon(Icons.history),
-          //   color: Colors.white,
-          //   onPressed: (){
-          //     Navigator.pushNamed(context, '/invoice');
-          //   },
-          // ),
           IconButton(
             icon: Icon(Icons.logout),
             color: Colors.white,
@@ -70,7 +63,7 @@ class HomePage extends StatelessWidget {
           ],
         ),
       ),
-      // bottomNavigationBar: _buildBottomNavigationBar(context),
+      bottomNavigationBar: _buildBottomNavigationBar(context),
     );
   }
 
@@ -275,4 +268,57 @@ Widget _buildProductCard(BuildContext context, Product product) {
       },
     );
   } 
+
+    Widget _buildBottomNavigationBar(BuildContext context) {
+      return BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: const Color.fromRGBO(134, 28, 30, 1), // Menambahkan warna latar belakang
+        selectedItemColor: Colors.white, // Warna ikon yang dipilih
+        unselectedItemColor: Colors.grey,
+        currentIndex: 0,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.store),
+            label: 'Store',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_basket),
+            label: 'Cart',
+          ),BottomNavigationBarItem(
+            icon: Icon(Icons.history),
+            label: 'History',
+          ),
+        ],
+        
+        onTap: (index) {
+          switch (index) {
+          case 0:
+            Navigator.pushNamed(
+              context, '/home'
+            );
+            return;
+          case 1:
+            Navigator.pushNamed(
+              context, '/store'
+            );
+            return;
+          case 2:
+            Navigator.pushNamed(
+              context, '/cart'
+            );
+            return;
+          case 3:
+            Navigator.pushNamed(
+              context, '/invoice'
+            );
+        }
+      },
+    );
+  }
+
+  
 }
