@@ -17,7 +17,7 @@ class CatalogPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Catalog Toko $namaToko',
+          'Katalog $namaToko',
           style: TextStyle(color: Colors.white),
         ),
         backgroundColor: const Color.fromRGBO(134, 28, 30, 1),

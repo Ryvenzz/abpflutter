@@ -48,8 +48,6 @@ class ShopPage extends StatelessWidget {
                               MaterialPageRoute(
                                 builder: (context) => CatalogPage(
                                     shopId: shop.id, namaToko: shop.namaToko),
-                                builder: (context) => CatalogPage(
-                                    shopId: shop.id, namaToko: shop.namaToko),
                               ),
                             );
                           },
@@ -76,8 +74,6 @@ class ShopPage extends StatelessWidget {
                                   blurRadius: 5,
                                   offset: Offset(
                                       0, 3), // changes position of shadow
-                                  offset: Offset(
-                                      0, 3), // changes position of shadow
                                 ),
                               ],
                             ),
@@ -100,7 +96,6 @@ class ShopPage extends StatelessWidget {
       bottomNavigationBar: _buildBottomNavigationBar(context),
     );
   }
-
 
   Widget _buildBottomNavigationBar(BuildContext context) {
     return BottomNavigationBar(
@@ -131,48 +126,16 @@ class ShopPage extends StatelessWidget {
 
       onTap: (index) {
         switch (index) {
-    return BottomNavigationBar(
-      type: BottomNavigationBarType.fixed,
-      backgroundColor: const Color.fromRGBO(
-          134, 28, 30, 1), // Menambahkan warna latar belakang
-      selectedItemColor: Colors.white, // Warna ikon yang dipilih
-      unselectedItemColor: Colors.grey,
-      currentIndex: 1,
-      items: const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          label: 'Home',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.store),
-          label: 'Store',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.shopping_basket),
-          label: 'Cart',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.history),
-          label: 'History',
-        ),
-      ],
-
-      onTap: (index) {
-        switch (index) {
           case 0:
-            Navigator.pushNamed(context, '/home');
             Navigator.pushNamed(context, '/home');
             return;
           case 1:
             Navigator.pushNamed(context, '/store');
-            Navigator.pushNamed(context, '/store');
             return;
           case 2:
             Navigator.pushNamed(context, '/cart');
-            Navigator.pushNamed(context, '/cart');
             return;
           case 3:
-            Navigator.pushNamed(context, '/invoice');
             Navigator.pushNamed(context, '/invoice');
         }
       },
