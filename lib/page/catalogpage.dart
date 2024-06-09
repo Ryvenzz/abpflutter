@@ -56,7 +56,7 @@ class CatalogPage extends StatelessWidget {
           }
         },
       ),
-            bottomNavigationBar: _buildBottomNavigationBar(context),
+      bottomNavigationBar: _buildBottomNavigationBar(context),
     );
   }
 
@@ -171,6 +171,7 @@ class CatalogPage extends StatelessWidget {
       ),
     );
   }
+
   Widget _buildBottomNavigationBar(BuildContext context) {
     return BottomNavigationBar(
       type: BottomNavigationBarType.fixed,
