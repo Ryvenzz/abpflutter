@@ -16,27 +16,25 @@ class ApiService {
   static const String loginUrl = 'http://10.0.2.2:8000/api/login';
   static const String RegisterUrl = 'http://10.0.2.2:8000/api/register';
 
-
-
   //Get All Menu
   static Future<ProductResponse> fetchProduct() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? token = prefs.getString('token');
+    String? token = prefs.getString('token');
 
-      if (token == null) {
-        // Handle the case where the token is not found
-        throw Exception('User not authenticated');
-      }
-      final response2 = await http.post(
-        Uri.parse('http://10.0.2.2:8000/api/user/info'),
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-      );
-      print("cek userid ${response2.body}");
-      var jsonResponse2 = jsonDecode(response2.body);
-      final String nickname = jsonResponse2['data']['nickname'];
+    if (token == null) {
+      // Handle the case where the token is not found
+      throw Exception('User not authenticated');
+    }
+    final response2 = await http.post(
+      Uri.parse('http://10.0.2.2:8000/api/user/info'),
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+    print("cek userid ${response2.body}");
+    var jsonResponse2 = jsonDecode(response2.body);
+    final String nickname = jsonResponse2['data']['nickname'];
 
     // Panggil endpoint untuk mendapatkan daftar produk
     final response = await http.get(Uri.parse(MenuUrl));
@@ -44,7 +42,8 @@ class ApiService {
     if (response.statusCode == 200) {
       var jsonResponse = jsonDecode(response.body);
       List<dynamic> data = jsonResponse['data'];
-      List<Product> products = data.map((item) => Product.fromJson(item)).toList();
+      List<Product> products =
+          data.map((item) => Product.fromJson(item)).toList();
       print(products);
       print(nickname);
       // Return ProductResponse yang berisi nickname dan daftar produk
@@ -61,7 +60,9 @@ class ApiService {
     if (response.statusCode == 200) {
       var jsonResponse = jsonDecode(response.body);
       List<dynamic> data = jsonResponse['data'];
-      List<Shop> shops = data.map((dynamic item) => Shop.fromJson(item)).toList();
+      List<Shop> shops =
+          data.map((dynamic item) => Shop.fromJson(item)).toList();
+      print(jsonResponse);
       return shops;
     } else {
       throw Exception('Failed to load shops');
@@ -105,7 +106,6 @@ class ApiService {
           'password': password,
         }),
       );
-      
 
       if (response.statusCode == 200) {
         var jsonResponse = jsonDecode(response.body);
@@ -129,7 +129,7 @@ class ApiService {
             throw Exception('Unexpected response format');
           }
         } else {
-          print("cek1"+jsonResponse);
+          print("cek1" + jsonResponse);
           throw Exception(jsonResponse['message']);
         }
       } else {
@@ -141,9 +141,9 @@ class ApiService {
         throw 'Salah username atau password';
       } else if (e.toString() == 'Exception: This account already logged in') {
         throw 'User sudah login di device lain';
-      }else if (e.toString() == 'Exception: User not found') {
-          throw 'Nickname pengguna tidak ditemukan';
-      }else{
+      } else if (e.toString() == 'Exception: User not found') {
+        throw 'Nickname pengguna tidak ditemukan';
+      } else {
         throw Exception('$e');
       }
     }
@@ -157,11 +157,8 @@ class ApiService {
     required String phoneNumber,
     required String role,
     required String address,
-  }) 
-  async {
-    try{
-
-    
+  }) async {
+    try {
       print(nickname + ' ' + password + ' ' + fullName + ' ' + role);
       final Map<String, String> requestBody = {
         'nickname': nickname,
@@ -173,16 +170,17 @@ class ApiService {
       };
       print(requestBody);
 
-        final response = await http.post(
-          Uri.parse(RegisterUrl),
-          body: requestBody,
-          headers: {'Accept': 'application/json'},
-        );
-      String responseJson = '{"status":"error","message":"The nickname has already been taken."}';
+      final response = await http.post(
+        Uri.parse(RegisterUrl),
+        body: requestBody,
+        headers: {'Accept': 'application/json'},
+      );
+      String responseJson =
+          '{"status":"error","message":"The nickname has already been taken."}';
       Map<String, dynamic> responseObject = jsonDecode(responseJson);
       String message = responseObject["message"];
       print(message);
-      
+
       if (response.statusCode == 201) {
         // Successful registration
         return jsonDecode(response.body);
@@ -193,14 +191,15 @@ class ApiService {
         } else {
           throw ('Mohon input dengan benar');
         }
-    }
-    }catch(e){
+      }
+    } catch (e) {
       throw Exception('$e');
     }
   }
 
   //Get menu by shop
   static Future<List<Menu>> fetchMenuByShop(int shopId) async {
+    print("cek");
     final Map<String, dynamic> requestData = {'shop_id': shopId};
     final response = await http.get(
       Uri.parse('http://10.0.2.2:8000/api/menu/byShop?shop_id=$shopId'),
@@ -210,11 +209,12 @@ class ApiService {
     if (response.statusCode == 200) {
       final jsonResponse = jsonDecode(response.body);
       List<dynamic> body = jsonResponse['data'];
-      
-      List<Menu> products = body.map((dynamic item) => Menu.fromJson(item)).toList();
+
+      List<Menu> products =
+          body.map((dynamic item) => Menu.fromJson(item)).toList();
       return products;
     } else {
-      throw Exception('Failed to load menu');
+      throw 'Menu not found';
     }
   }
 
@@ -228,24 +228,22 @@ class ApiService {
         // Handle the case where the token is not found
         throw Exception('User not authenticated');
       }
-      
+
       // print(bookingId.toString() + menuId.toString() + quantity.toString());
 
-
       final Map<String, String> requestBody = {
-          'bookingId': bookingId.toString(),
-          'menuId': menuId.toString(),
-          'quantity': quantity.toString(),
+        'bookingId': bookingId.toString(),
+        'menuId': menuId.toString(),
+        'quantity': quantity.toString(),
       };
-        print(requestBody);
+      print(requestBody);
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:8000/api/booking/detail/menu/add'),
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-        body: requestBody
-      );
+          Uri.parse('http://10.0.2.2:8000/api/booking/detail/menu/add'),
+          headers: {
+            'Accept': 'application/json',
+            'Authorization': 'Bearer $token',
+          },
+          body: requestBody);
       print("cek add cart ${response.body}");
       if (response.statusCode != 201) {
         // Handle the error
@@ -280,7 +278,8 @@ class ApiService {
       final int userid = jsonResponse2['data']['id'];
 
       final response = await http.get(
-        Uri.parse('http://10.0.2.2:8000/api/booking/prog/byUser?user_id=$userid'),
+        Uri.parse(
+            'http://10.0.2.2:8000/api/booking/prog/byUser?user_id=$userid'),
         headers: {
           'Accept': 'application/json',
           'Authorization': 'Bearer $token',
@@ -342,7 +341,11 @@ class ApiService {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
 
-      print(bookingId.toString() + ' ' + menuId.toString() + ' ' + quantity.toString());
+      print(bookingId.toString() +
+          ' ' +
+          menuId.toString() +
+          ' ' +
+          quantity.toString());
       if (token == null) {
         throw Exception('User not authenticated');
       }
@@ -383,7 +386,7 @@ class ApiService {
 
       final Map<String, dynamic> requestBody = {
         'bookingId': bookingId.toString(),
-        'menuId': menuId.toString(),  
+        'menuId': menuId.toString(),
       };
 
       final response = await http.delete(
@@ -458,9 +461,9 @@ class ApiService {
       var jsonResponse2 = jsonDecode(response2.body);
       final int userid = jsonResponse2['data']['id'];
 
-
       final response = await http.get(
-        Uri.parse('http://10.0.2.2:8000/api/invoice/all/byUser?user_id=$userid'),
+        Uri.parse(
+            'http://10.0.2.2:8000/api/invoice/all/byUser?user_id=$userid'),
         headers: {
           'Accept': 'application/json',
           'Authorization': 'Bearer $token',
@@ -470,7 +473,8 @@ class ApiService {
       if (response.statusCode == 200) {
         var jsonResponse = jsonDecode(response.body);
         List<dynamic> bookingData = jsonResponse['data'];
-        List<Booking> bookings = bookingData.map((data) => Booking.fromJson(data)).toList();
+        List<Booking> bookings =
+            bookingData.map((data) => Booking.fromJson(data)).toList();
         return bookings;
       } else {
         // Handle the error
@@ -484,37 +488,36 @@ class ApiService {
 
   //Get menu invoice
   static Future<List<MenuBooking>> showMenuBooking(int invoiceId) async {
-  try {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString('token');
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
 
-    if (token == null) {
-      throw Exception('User not authenticated');
+      if (token == null) {
+        throw Exception('User not authenticated');
+      }
+
+      final response = await http.get(
+        Uri.parse(
+            'http://10.0.2.2:8000/api/invoice/menu/ByBooking?invoice_id=$invoiceId'),
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        Map<String, dynamic> data = jsonDecode(response.body);
+        print(data['data']['menus']);
+
+        List<MenuBooking> menuBookings = (data['data']['menus'] as List)
+            .map((menuJson) => MenuBooking.fromJson(menuJson))
+            .toList();
+        return menuBookings;
+      } else {
+        throw Exception('Failed to load menu booking');
+      }
+    } catch (e) {
+      throw Exception('Error: $e');
     }
-
-
-    final response = await http.get(
-      Uri.parse('http://10.0.2.2:8000/api/invoice/menu/ByBooking?invoice_id=$invoiceId'),
-      headers: {
-        'Accept': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-    );
-
-    if (response.statusCode == 200) {
-      Map<String, dynamic> data = jsonDecode(response.body);
-      print(data['data']['menus']);
-
-      List<MenuBooking> menuBookings = (data['data']['menus'] as List).map((menuJson) => MenuBooking.fromJson(menuJson)).toList();
-      return menuBookings;
-    } else {
-      throw Exception('Failed to load menu booking');
-    }
-  } catch (e) {
-    throw Exception('Error: $e');
   }
-}
-
-
-
 }
