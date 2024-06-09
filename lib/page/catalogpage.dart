@@ -1,133 +1,222 @@
 import 'package:flutter/material.dart';
-import 'package:abp/item/catalog.dart';
-import 'package:abp/API/api_service.dart';
+import '../item/menushop.dart';
+import '../API/api_service.dart';
 
-class StoreCatalogPage extends StatelessWidget {
+class CatalogPage extends StatelessWidget {
+  final int shopId;
+  final String namaToko;
+
+  const CatalogPage({
+    super.key, // Using super parameter for key
+    required this.shopId,
+    required this.namaToko,
+  });
+
   @override
   Widget build(BuildContext context) {
-    final dynamic argument = ModalRoute.of(context)!.settings.arguments;
-    final int storeId = argument is int ? argument : int.parse(argument.toString());
-
     return Scaffold(
       appBar: AppBar(
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            color: const Color.fromRGBO(134, 28, 30, 1),
-          ),
+        title: Text(
+          'Catalog Toko $namaToko',
+          style: TextStyle(color: Colors.white),
         ),
+        backgroundColor: const Color.fromRGBO(134, 28, 30, 1),
       ),
-      body: FutureBuilder<List<catalog>>(
-        future: ApiService.fetchProducts(storeId),
+      body: FutureBuilder<List<Menu>>(
+        future: ApiService.fetchMenuByShop(shopId),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
+            return Center(child: Text('${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return Center(child: Text('No products found'));
-          }
-
-          final catalogs = snapshot.data!;
-          final storeName = catalogs.isNotEmpty ? catalogs.first.shopNamaToko : 'Store';
-
-          return Column(
-            children: [
-              AppBar(
-                title: Text(
-                  storeName,
-                  style: TextStyle(color: Colors.white),
-                ),
-                automaticallyImplyLeading: false,
-              ),
-              Expanded(
-                child: GridView.builder(
-                  padding: EdgeInsets.all(16.0),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    childAspectRatio: 0.75,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
+          } else {
+            return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  SizedBox(height: 10),
+                  GridView.builder(
+                    padding: EdgeInsets.all(16.0),
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      childAspectRatio: 0.75,
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10,
+                    ),
+                    itemCount: snapshot.data!.length,
+                    itemBuilder: (context, index) {
+                      Menu Menus = snapshot.data![index];
+                      return _buildProductCard(context, Menus);
+                    },
                   ),
-                  itemCount: catalogs.length,
-                  itemBuilder: (context, index) {
-                    final catalogItem = catalogs[index];
-                    return GestureDetector(
-                      onTap: () {
-                        _showModal(context);
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: Colors.grey[300]!),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: <Widget>[
-                            Expanded(
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                    image: NetworkImage(catalogItem.imageMenu ?? 'placeholder_image_url'),
-                                    fit: BoxFit.cover,
-                                  ),
-                                  borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      Container(
-                                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                        decoration: BoxDecoration(
-                                          color: Color.fromARGB(255, 236, 19, 4).withOpacity(0.8),
-                                          borderRadius: BorderRadius.circular(4),
-                                        ),
-                                        child: Text('${catalogItem.hargaMenu}'),
-                                      ),
-                                      IconButton(
-                                        icon: Icon(Icons.add),
-                                        onPressed: () {
-                                          _showModal(context);
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: 8),
-                                  Text(
-                                    catalogItem.namaMenu,
-                                    style: TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                  Text(
-                                    catalogItem.deskripsiMenu,
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 2,
-                                    style: TextStyle(fontSize: 12),
-                                  ),
-                                  SizedBox(height: 8),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
-          );
+                ]);
+          }
         },
       ),
+            bottomNavigationBar: _buildBottomNavigationBar(context),
     );
   }
 
-  void _showModal(BuildContext context) {
+  Widget _buildProductCard(BuildContext context, Menu Menu) {
+    return GestureDetector(
+      onTap: () {
+        // Add your onTap logic here
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: Colors.grey[300]!),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.25),
+              spreadRadius: 2,
+              blurRadius: 5,
+              offset: Offset(0, 3), // changes position of shadow
+            ),
+          ],
+        ),
+        child: Stack(
+          children: <Widget>[
+            // Background image
+            Container(
+              height: 400.0,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                image: DecorationImage(
+                  image: NetworkImage(
+                    Menu.imageMenu != null
+                        ? 'http://10.0.2.2:8001/api/${Menu.imageMenu}'
+                        : 'https://fivestar.sirv.com/example.jpg?profile=Example',
+                  ),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            // Text and other content
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.8),
+                  borderRadius:
+                      BorderRadius.vertical(bottom: Radius.circular(8)),
+                ),
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Container(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Color.fromARGB(255, 236, 19, 4)
+                                .withOpacity(0.8),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            '\Rp.${Menu.hargaMenu}',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.add),
+                          onPressed: () async {
+                            try {
+                              int? bookingId =
+                                  await ApiService.getBookingIdByUser();
+                              if (bookingId == null) {
+                                // Handle the case where the booking ID is not found
+                                throw Exception('Booking ID not found');
+                              }
+                              _showModal(context, Menu, bookingId);
+                            } catch (e) {
+                              // Handle any errors that occur
+                              print('Error: $e');
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      Menu.namaMenu,
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      "Stok: " + Menu.stokMenu.toString(),
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      Menu.deskripsiMenu,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
+                      style: TextStyle(fontSize: 12),
+                    ),
+                    SizedBox(height: 8),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+  Widget _buildBottomNavigationBar(BuildContext context) {
+    return BottomNavigationBar(
+      type: BottomNavigationBarType.fixed,
+      backgroundColor: const Color.fromRGBO(
+          134, 28, 30, 1), // Menambahkan warna latar belakang
+      selectedItemColor: Colors.white, // Warna ikon yang dipilih
+      unselectedItemColor: Colors.grey,
+      currentIndex: 1,
+      items: const [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          label: 'Home',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.store),
+          label: 'Store',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.shopping_basket),
+          label: 'Cart',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.history),
+          label: 'History',
+        ),
+      ],
+
+      onTap: (index) {
+        switch (index) {
+          case 0:
+            Navigator.pushNamed(context, '/home');
+            return;
+          case 1:
+            Navigator.pushNamed(context, '/store');
+            return;
+          case 2:
+            Navigator.pushNamed(context, '/cart');
+            return;
+          case 3:
+            Navigator.pushNamed(context, '/invoice');
+        }
+      },
+    );
+  }
+
+  void _showModal(BuildContext context, Menu product, int bookingId) {
     int quantity = 1;
 
     showModalBottomSheet(
@@ -139,10 +228,10 @@ class StoreCatalogPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('Order Product'),
+              Text('Order ${product.namaMenu}'), // Modal title
               SizedBox(height: 20),
               TextFormField(
-                initialValue: '1',
+                initialValue: '1', // Menggunakan '1' sebagai nilai awal
                 decoration: InputDecoration(
                   labelText: 'Quantity',
                   border: OutlineInputBorder(),
@@ -154,11 +243,18 @@ class StoreCatalogPage extends StatelessWidget {
               ),
               SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {
-                  print('Ordered $quantity products');
-                  Navigator.pop(context);
+                onPressed: () async {
+                  try {
+                    await ApiService.addCart(bookingId, product.id, quantity);
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(SnackBar(content: Text('Added to cart')));
+                    Navigator.pop(context); // Close modal
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Failed to add to cart: $e')));
+                  }
                 },
-                child: Text('Order'),
+                child: Text('Order'), // Order button
               ),
             ],
           ),

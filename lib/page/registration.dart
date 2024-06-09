@@ -1,32 +1,40 @@
-import 'package:abp/User/user.dart';
 import 'package:flutter/material.dart';
+import '../API/api_service.dart'; // Sesuaikan dengan lokasi file ApiService
 
-class RegistrationForm extends StatefulWidget {
+class RegistrationPage extends StatefulWidget {
   @override
-  _RegistrationFormState createState() => _RegistrationFormState();
+  _RegistrationPageState createState() => _RegistrationPageState();
 }
 
-class _RegistrationFormState extends State<RegistrationForm> {
+class _RegistrationPageState extends State<RegistrationPage> {
   final _formKey = GlobalKey<FormState>();
-  String _name = "";
-  String _email = "";
-  String _password = "";
-  String _confirmPassword = "";
+  TextEditingController _nicknameController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
+  TextEditingController _confirmPasswordController = TextEditingController();
+  TextEditingController _fullNameController = TextEditingController();
+  TextEditingController _phoneNumberController = TextEditingController();
+  TextEditingController _addressController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      body: Center( // Menggunakan Center untuk menengahkan kotak pendaftaran
+    return Scaffold(
+      body: Center(
         child: SingleChildScrollView(
           padding: EdgeInsets.all(16.0),
           child: Container(
             padding: EdgeInsets.all(16.0),
             decoration: BoxDecoration(
+              color: Colors.white,
               borderRadius: BorderRadius.circular(8.0),
-              border: Border.all(
-                color: Colors.grey,
-                width: 1.0,
-              ),
+              border: Border.all(color: Colors.grey[300]!),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.25),
+                  spreadRadius: 2,
+                  blurRadius: 5,
+                  offset: Offset(0, 3), // changes position of shadow
+                ),
+              ],
             ),
             child: Form(
               key: _formKey,
@@ -55,49 +63,23 @@ class _RegistrationFormState extends State<RegistrationForm> {
                   ),
                   SizedBox(height: 20.0),
                   TextFormField(
-                    initialValue: _name,
+                    controller: _nicknameController,
                     decoration: InputDecoration(
-                      hintText: 'Nama',
+                      hintText: 'Nickname',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8.0),
                       ),
                     ),
                     validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Please enter your name';
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your Nickname';
                       }
                       return null;
-                    },
-                    onSaved: (value) {
-                      setState(() {
-                        _name = value!;
-                      });
                     },
                   ),
                   SizedBox(height: 16.0),
                   TextFormField(
-                    decoration: InputDecoration(
-                      hintText: 'Email Address',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Please enter your email address';
-                      } else if (!RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+\.[a-zA-Z]+").hasMatch(value)) {
-                        return 'Please enter a valid email address';
-                      }
-                      return null;
-                    },
-                    onSaved: (value) {
-                      setState(() {
-                        _email = value!;
-                      });
-                    },
-                  ),
-                  SizedBox(height: 16.0),
-                  TextFormField(
+                    controller: _passwordController,
                     decoration: InputDecoration(
                       hintText: 'Password',
                       border: OutlineInputBorder(
@@ -105,33 +87,79 @@ class _RegistrationFormState extends State<RegistrationForm> {
                       ),
                     ),
                     validator: (value) {
-                      if (value!.isEmpty) {
+                      if (value == null || value.isEmpty) {
                         return 'Please enter your password';
                       } else if (value.length < 6) {
                         return 'Password must be at least 6 characters long';
                       }
                       return null;
                     },
-                    onSaved: (value) {
-                      _password = value!.trim();
-                    },
                     obscureText: true,
                   ),
                   SizedBox(height: 16.0),
                   TextFormField(
+                    controller: _confirmPasswordController,
                     decoration: InputDecoration(
                       hintText: 'Confirm Password',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8.0),
                       ),
                     ),
-                    onSaved: (value) {
-                      _confirmPassword = value!.trim();
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please confirm your password';
+                      } else if (value != _passwordController.text) {
+                        return 'Passwords do not match';
+                      }
+                      return null;
                     },
                     obscureText: true,
+                  ),
+                  SizedBox(height: 20.0),
+                  TextFormField(
+                    controller: _fullNameController,
+                    decoration: InputDecoration(
+                      hintText: 'Fullname',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    ),
                     validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Please confirm your password';
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your Fullname';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 16.0),
+                  TextFormField(
+                    controller: _phoneNumberController,
+                    decoration: InputDecoration(
+                      hintText: 'Phone Number',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    ),
+                    keyboardType: TextInputType.number,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your phone number';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 16.0),
+                  TextFormField(
+                    controller: _addressController,
+                    decoration: InputDecoration(
+                      hintText: 'Address',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your address';
                       }
                       return null;
                     },
@@ -142,31 +170,15 @@ class _RegistrationFormState extends State<RegistrationForm> {
                       borderRadius: BorderRadius.circular(8.0),
                       gradient: LinearGradient(
                         colors: [
-                          const Color.fromARGB(255, 236, 19, 4).withOpacity(0.8),const Color.fromARGB(255, 32, 3, 1).withOpacity(0.8)
+                          const Color.fromARGB(255, 236, 19, 4).withOpacity(0.8),
+                          const Color.fromARGB(255, 32, 3, 1).withOpacity(0.8)
                         ],
                         begin: Alignment.centerLeft,
                         end: Alignment.centerRight,
                       ),
                     ),
                     child: ElevatedButton(
-                     onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        _formKey.currentState!.save();
-                        // Memeriksa apakah password dan konfirmasi password cocok
-                      if (_password != _confirmPassword) {
-                        // Jika tidak cocok, tampilkan pesan kesalahan di bawah TextFormField
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Passwords do not match. Please try again.'),
-                          ),
-                        );
-                      } else {
-                          // Jika cocok, daftarkan pengguna dan pindah ke halaman login
-                          registerUser(_name, _email, _password);
-                          Navigator.pushNamed(context, '/login');
-                        }
-                      }
-                    },
+                      onPressed: _registerUser,
                       child: Text(
                         'Register',
                         style: TextStyle(color: Colors.white),
@@ -181,6 +193,22 @@ class _RegistrationFormState extends State<RegistrationForm> {
                       ),
                     ),
                   ),
+                  SizedBox(height: 20.0),
+                  GestureDetector(
+                    onTap: () {
+                      // Pindah ke halaman registrasi
+                      Navigator.pushNamed(context, '/login');
+                    },
+                    child: Text(
+                      'Have an account? Login here',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.blue,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 8.0),
                 ],
               ),
             ),
@@ -189,4 +217,69 @@ class _RegistrationFormState extends State<RegistrationForm> {
       ),
     );
   }
+
+  void _registerUser() {
+    if (_formKey.currentState!.validate()) {
+      // Jika formulir valid, lanjutkan dengan proses registrasi
+      String nickname = _nicknameController.text;
+      String password = _passwordController.text;
+      String fullName = _fullNameController.text;
+      String phoneNumber = _phoneNumberController.text;
+      String address = _addressController.text;
+      String role = 'Buyer'; // Default role for registration
+
+      ApiService.registerUser(
+        nickname: nickname,
+        password: password,
+        fullName: fullName,
+        phoneNumber: phoneNumber,
+        role: role,
+        address: address,
+      ).then((_) {
+        // Registrasi berhasil, tampilkan dialog sukses
+        _showSuccessDialog();
+      }).catchError((e) {
+        // Registrasi gagal, tampilkan pesan kesalahan
+        _showErrorDialog(e);
+      });
+    }
+  }
+
+
+  void _showSuccessDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Registration Successful'),
+        content: Text('You have successfully registered.'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context); // Tutup dialog
+              Navigator.pushReplacementNamed(context, '/login'); // Kembali ke halaman login
+            },
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showErrorDialog(e) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Registration Failed'),
+        // content: Text('Failed to register user. Please try again.'),
+        content: Text(e.toString()),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
 }

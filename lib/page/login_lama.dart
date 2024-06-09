@@ -1,59 +1,30 @@
+import 'package:abp/User/user.dart';
 import 'package:flutter/material.dart';
-import '../API/api_service.dart';
 
-class LoginPage extends StatefulWidget {
+class LoginForm extends StatefulWidget {
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _LoginFormState createState() => _LoginFormState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginFormState extends State<LoginForm> {
   final _formKey = GlobalKey<FormState>();
-  final _nicknameController = TextEditingController();
-  final _passwordController = TextEditingController();
-  String _errorMessage = '';
-
-  Future<void> _login() async {
-    if (_formKey.currentState?.validate() ?? false) {
-      setState(() {
-        _errorMessage = '';
-      });
-
-      try {
-        String token = await ApiService.login(
-          _nicknameController.text,
-          _passwordController.text,
-        );
-
-        // On successful login, navigate to home page
-        Navigator.pushReplacementNamed(context, '/home', arguments: {'token': token});
-      } catch (e) {
-        setState(() {
-          _errorMessage = e.toString();
-        });
-      }
-    }
-  }
+  String _email = "";
+  String _password = "";
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
+      body: Center( // Menggunakan Center untuk menengahkan kotak login
         child: SingleChildScrollView(
           padding: EdgeInsets.all(16.0),
           child: Container(
             padding: EdgeInsets.all(16.0),
             decoration: BoxDecoration(
-              color: Colors.white,
               borderRadius: BorderRadius.circular(8.0),
-              border: Border.all(color: Colors.grey[300]!),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.25),
-                  spreadRadius: 2,
-                  blurRadius: 5,
-                  offset: Offset(0, 3), // changes position of shadow
-                ),
-              ],
+              border: Border.all(
+                color: Colors.grey,
+                width: 1.0,
+              ),
             ),
             child: Form(
               key: _formKey,
@@ -82,24 +53,28 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   SizedBox(height: 20.0),
                   TextFormField(
-                    controller: _nicknameController,
                     decoration: InputDecoration(
-                      hintText: 'Nickname',
+                      hintText: 'Email Address',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8.0),
                       ),
                     ),
                     validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your nickname';
+                      if (value!.isEmpty) {
+                        return 'Please enter your email address';
+                      } else if (!RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+\.[a-zA-Z]+").hasMatch(value)) {
+                        return 'Please enter a valid email address';
                       }
                       return null;
+                    },
+                    onSaved: (value) {
+                      setState(() {
+                        _email = value!;
+                      });
                     },
                   ),
                   SizedBox(height: 16.0),
                   TextFormField(
-                    controller: _passwordController,
-                    obscureText: true,
                     decoration: InputDecoration(
                       hintText: 'Password',
                       border: OutlineInputBorder(
@@ -107,33 +82,60 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                     validator: (value) {
-                      if (value == null || value.isEmpty) {
+                      if (value!.isEmpty) {
                         return 'Please enter your password';
+                      } else if (value.length < 6) {
+                        return 'Password must be at least 6 characters long';
                       }
                       return null;
                     },
+                    onSaved: (value) {
+                      setState(() {
+                        _password = value!;
+                      });
+                    },
+                    obscureText: true,
                   ),
                   SizedBox(height: 20.0),
-                  if (_errorMessage.isNotEmpty)
-                    Text(
-                      _errorMessage,
-                      style: TextStyle(color: Colors.red),
-                    ), 
-                  SizedBox(height: 20.0),
-                   
                   Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8.0),
                       gradient: LinearGradient(
                         colors: [
-                          const Color.fromARGB(255, 236, 19, 4).withOpacity(0.8), const Color.fromARGB(255, 32, 3, 1).withOpacity(0.8)
+                          const Color.fromARGB(255, 236, 19, 4).withOpacity(0.8),const Color.fromARGB(255, 32, 3, 1).withOpacity(0.8)
                         ],
                         begin: Alignment.centerLeft,
                         end: Alignment.centerRight,
                       ),
                     ),
                     child: ElevatedButton(
-                      onPressed: _login,
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          _formKey.currentState!.save();
+                          if (loginUser(_email, _password) != null) { // Memeriksa kredensial login
+                            Navigator.pushNamed(context, '/home');
+                          } else {
+                            // Menampilkan pesan kesalahan jika login gagal
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text('Login Failed'),
+                                  content: Text('Invalid email or password. Please try again.'),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text('OK'),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          }
+                        }
+                      },
                       child: Text(
                         'Login',
                         style: TextStyle(color: Colors.white),
@@ -141,7 +143,7 @@ class _LoginPageState extends State<LoginPage> {
                       style: ElevatedButton.styleFrom(
                         minimumSize: Size(double.infinity, 50),
                         backgroundColor: Colors.transparent,
-                        elevation: 0,
+                        elevation: 0, // No shadow
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.0),
                         ),
@@ -149,10 +151,9 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   SizedBox(height: 20.0),
-                  
                   GestureDetector(
                     onTap: () {
-                      // Navigate to registration page
+                      // Pindah ke halaman registrasi
                       Navigator.pushNamed(context, '/registration');
                     },
                     child: Text(
@@ -164,7 +165,6 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 8.0),
                 ],
               ),
             ),
@@ -172,12 +172,5 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _nicknameController.dispose();
-    _passwordController.dispose();
-    super.dispose();
   }
 }
